@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String               @id @default(uuid())
+  email            String               @unique
+  name             String
+  avatarUrl        String?
+  provider         String               // "dev", "google", or "microsoft"
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  refreshToken     String?
+  signatures       Signature[]
+  teams            Team[]
+  orgMemberships   OrganizationMember[]
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+}
+
+model Organization {
+  id             String               @id @default(uuid())
+  name           String
+  slug           String               @unique
+  logoUrl        String?
+  bannerUrl      String?
+  primaryColor   String?
+  secondaryColor String?
+  fontFamily     String?              @default("Arial")
+  fontSize       String?              @default("14")
+  website        String?
+  members        OrganizationMember[]
+  templates      Template[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  role           String       @default("member") // "owner", "admin", "member"
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, organizationId])
+}
+
+model Template {
+  id             String        @id @default(uuid())
+  name           String
+  description    String?
+  category       String?       @default("general")
+  tags           String?       // JSON-encoded string array, e.g. '["ngo","formal"]'
+  thumbnailUrl   String?
+  isPublic       Boolean       @default(true)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Signature {
+  id          String   @id @default(uuid())
+  name        String
+  title       String?
+  company     String?
+  department  String?
+  phone       String?
+  mobile      String?
+  website     String?
+  email       String
+  address     String?
+  logoUrl     String?
+  socialLinks String?
+  templateId  String
+  primaryColor String?
+  fontFamily   String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Team {
+  id         String      @id @default(uuid())
+  name       String
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  signatures Signature[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
