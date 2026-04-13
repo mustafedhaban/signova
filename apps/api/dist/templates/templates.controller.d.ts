@@ -3,11 +3,12 @@ import { CreateTemplateDto } from './dto/create-template.dto';
 export declare class TemplatesController {
     private readonly templatesService;
     constructor(templatesService: TemplatesService);
-    findAll(req: any, orgId?: string): Promise<{
+    findAll(req: any, orgId?: string, category?: string, tag?: string): Promise<{
         id: string;
         name: string;
         description: string;
         category: string;
+        tags: string;
         isPublic: boolean;
         thumbnailUrl: any;
     }[]>;
@@ -16,6 +17,7 @@ export declare class TemplatesController {
         name: string;
         description: string;
         category: string;
+        tags: string;
         isPublic: boolean;
         thumbnailUrl: any;
     }>;
@@ -27,6 +29,7 @@ export declare class TemplatesController {
         organizationId: string | null;
         description: string | null;
         category: string | null;
+        tags: string | null;
         thumbnailUrl: string | null;
         isPublic: boolean;
     }>;
@@ -38,6 +41,7 @@ export declare class TemplatesController {
         organizationId: string | null;
         description: string | null;
         category: string | null;
+        tags: string | null;
         thumbnailUrl: string | null;
         isPublic: boolean;
     }>;
@@ -49,6 +53,7 @@ export declare class TemplatesController {
         organizationId: string | null;
         description: string | null;
         category: string | null;
+        tags: string | null;
         thumbnailUrl: string | null;
         isPublic: boolean;
     }>;

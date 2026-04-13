@@ -5,17 +5,19 @@ export declare const BUILTIN_TEMPLATES: {
     name: string;
     description: string;
     category: string;
+    tags: string;
     isPublic: boolean;
     thumbnailUrl: any;
 }[];
 export declare class TemplatesService {
     private prisma;
     constructor(prisma: PrismaService);
-    findAll(userId: string, orgId?: string): Promise<{
+    findAll(userId: string, orgId?: string, category?: string, tag?: string): Promise<{
         id: string;
         name: string;
         description: string;
         category: string;
+        tags: string;
         isPublic: boolean;
         thumbnailUrl: any;
     }[]>;
@@ -24,6 +26,7 @@ export declare class TemplatesService {
         name: string;
         description: string;
         category: string;
+        tags: string;
         isPublic: boolean;
         thumbnailUrl: any;
     }>;
@@ -35,6 +38,7 @@ export declare class TemplatesService {
         organizationId: string | null;
         description: string | null;
         category: string | null;
+        tags: string | null;
         thumbnailUrl: string | null;
         isPublic: boolean;
     }>;
@@ -46,6 +50,7 @@ export declare class TemplatesService {
         organizationId: string | null;
         description: string | null;
         category: string | null;
+        tags: string | null;
         thumbnailUrl: string | null;
         isPublic: boolean;
     }>;
@@ -57,6 +62,7 @@ export declare class TemplatesService {
         organizationId: string | null;
         description: string | null;
         category: string | null;
+        tags: string | null;
         thumbnailUrl: string | null;
         isPublic: boolean;
     }>;

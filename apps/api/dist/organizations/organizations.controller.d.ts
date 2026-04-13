@@ -34,11 +34,11 @@ export declare class OrganizationsController {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     findAll(req: any): Promise<({
@@ -55,11 +55,11 @@ export declare class OrganizationsController {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     })[]>;
     findOne(req: any, id: string): Promise<{
@@ -84,11 +84,11 @@ export declare class OrganizationsController {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     update(req: any, id: string, dto: UpdateOrganizationDto): Promise<{
@@ -98,11 +98,11 @@ export declare class OrganizationsController {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     remove(req: any, id: string): Promise<{
@@ -112,11 +112,11 @@ export declare class OrganizationsController {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     inviteMember(req: any, id: string, dto: InviteMemberDto): Promise<{
@@ -146,11 +146,11 @@ export declare class OrganizationsController {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     updateMemberRole(req: any, id: string, memberId: string, role: string): Promise<{

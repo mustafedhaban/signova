@@ -1,8 +1,10 @@
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSignatureDto, UpdateSignatureDto } from './dto/create-signature.dto';
 export declare class SignaturesService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private configService;
+    constructor(prisma: PrismaService, configService: ConfigService);
     create(userId: string, createSignatureDto: CreateSignatureDto): Promise<{
         id: string;
         email: string;
@@ -19,6 +21,8 @@ export declare class SignaturesService {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
@@ -38,6 +42,8 @@ export declare class SignaturesService {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }[]>;
@@ -57,6 +63,8 @@ export declare class SignaturesService {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
@@ -76,6 +84,8 @@ export declare class SignaturesService {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
@@ -95,7 +105,13 @@ export declare class SignaturesService {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
+    generateShareLink(userId: string, id: string): Promise<{
+        url: string;
+    }>;
+    decodeShareToken(token: string): any;
 }

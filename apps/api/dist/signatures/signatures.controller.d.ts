@@ -19,6 +19,8 @@ export declare class SignaturesController {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
@@ -38,6 +40,8 @@ export declare class SignaturesController {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }[]>;
@@ -57,8 +61,13 @@ export declare class SignaturesController {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
+    }>;
+    getShareLink(req: any, id: string): Promise<{
+        url: string;
     }>;
     update(req: any, id: string, updateSignatureDto: UpdateSignatureDto): Promise<{
         id: string;
@@ -76,6 +85,8 @@ export declare class SignaturesController {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
@@ -95,7 +106,14 @@ export declare class SignaturesController {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        primaryColor: string | null;
+        fontFamily: string | null;
         userId: string;
         teamId: string | null;
     }>;
+}
+export declare class ShareController {
+    private readonly signaturesService;
+    constructor(signaturesService: SignaturesService);
+    decodeShare(token: string): any;
 }

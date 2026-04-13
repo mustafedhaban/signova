@@ -11,10 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignaturesService = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
 let SignaturesService = class SignaturesService {
-    constructor(prisma) {
+    constructor(prisma, configService) {
         this.prisma = prisma;
+        this.configService = configService;
     }
     async create(userId, createSignatureDto) {
         return this.prisma.signature.create({
@@ -62,14 +64,40 @@ let SignaturesService = class SignaturesService {
     }
     async remove(userId, id) {
         await this.findOne(userId, id);
-        return this.prisma.signature.delete({
-            where: { id },
-        });
+        return this.prisma.signature.delete({ where: { id } });
+    }
+    async generateShareLink(userId, id) {
+        const signature = await this.findOne(userId, id);
+        const payload = {
+            name: signature.name,
+            title: signature.title,
+            company: signature.company,
+            email: signature.email,
+            phone: signature.phone,
+            mobile: signature.mobile,
+            website: signature.website,
+            logoUrl: signature.logoUrl,
+            templateId: signature.templateId,
+            socialLinks: signature.socialLinks,
+        };
+        const token = Buffer.from(JSON.stringify(payload)).toString('base64url');
+        const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:5173';
+        return { url: `${frontendUrl}/shared/${token}` };
+    }
+    decodeShareToken(token) {
+        try {
+            const json = Buffer.from(token, 'base64url').toString('utf-8');
+            return JSON.parse(json);
+        }
+        catch {
+            throw new common_1.BadRequestException('Invalid share token');
+        }
     }
 };
 exports.SignaturesService = SignaturesService;
 exports.SignaturesService = SignaturesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        config_1.ConfigService])
 ], SignaturesService);
 //# sourceMappingURL=signatures.service.js.map

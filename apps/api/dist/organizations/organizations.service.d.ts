@@ -32,11 +32,11 @@ export declare class OrganizationsService {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     findAllForUser(userId: string): Promise<({
@@ -53,11 +53,11 @@ export declare class OrganizationsService {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     })[]>;
     findOne(userId: string, orgId: string): Promise<{
@@ -82,11 +82,11 @@ export declare class OrganizationsService {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     updateBranding(userId: string, orgId: string, dto: any): Promise<{
@@ -96,11 +96,11 @@ export declare class OrganizationsService {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     update(userId: string, orgId: string, dto: UpdateOrganizationDto): Promise<{
@@ -110,11 +110,11 @@ export declare class OrganizationsService {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     remove(userId: string, orgId: string): Promise<{
@@ -124,11 +124,11 @@ export declare class OrganizationsService {
         updatedAt: Date;
         website: string | null;
         logoUrl: string | null;
-        slug: string;
         primaryColor: string | null;
+        fontFamily: string | null;
+        slug: string;
         bannerUrl: string | null;
         secondaryColor: string | null;
-        fontFamily: string | null;
         fontSize: string | null;
     }>;
     inviteMember(userId: string, orgId: string, email: string, role: string): Promise<{

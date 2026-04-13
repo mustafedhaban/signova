@@ -38,6 +38,8 @@ export declare class TeamsController {
             logoUrl: string | null;
             socialLinks: string | null;
             templateId: string;
+            primaryColor: string | null;
+            fontFamily: string | null;
             userId: string;
             teamId: string | null;
         }[];

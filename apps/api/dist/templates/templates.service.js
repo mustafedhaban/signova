@@ -13,15 +13,18 @@ exports.TemplatesService = exports.BUILTIN_TEMPLATES = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 exports.BUILTIN_TEMPLATES = [
-    { id: 'standard', name: 'Professional Classic', description: 'Traditional side-by-side layout', category: 'professional', isPublic: true, thumbnailUrl: null },
-    { id: 'modern', name: 'Modern Minimal', description: 'Clean design with blue accent bar', category: 'modern', isPublic: true, thumbnailUrl: null },
-    { id: 'corporate', name: 'Corporate Bold', description: 'Dark navy panel with colored border', category: 'corporate', isPublic: true, thumbnailUrl: null },
+    { id: 'standard', name: 'Professional Classic', description: 'Traditional side-by-side layout', category: 'professional', tags: '["classic","formal","ngo"]', isPublic: true, thumbnailUrl: null },
+    { id: 'modern', name: 'Modern Minimal', description: 'Clean design with blue accent bar', category: 'modern', tags: '["minimal","clean","modern"]', isPublic: true, thumbnailUrl: null },
+    { id: 'corporate', name: 'Corporate Bold', description: 'Dark navy panel with colored border', category: 'corporate', tags: '["bold","corporate","formal"]', isPublic: true, thumbnailUrl: null },
+    { id: 'creative', name: 'Creative Colorful', description: 'Vibrant gradient design', category: 'creative', tags: '["colorful","creative","ngo"]', isPublic: true, thumbnailUrl: null },
+    { id: 'executive', name: 'Executive Formal', description: 'Conservative gold-accented layout', category: 'executive', tags: '["formal","executive","ngo"]', isPublic: true, thumbnailUrl: null },
+    { id: 'tech', name: 'Tech Startup', description: 'Dark terminal-inspired design', category: 'tech', tags: '["tech","startup","modern"]', isPublic: true, thumbnailUrl: null },
 ];
 let TemplatesService = class TemplatesService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll(userId, orgId) {
+    async findAll(userId, orgId, category, tag) {
         const dbTemplates = await this.prisma.template.findMany({
             where: {
                 OR: [
@@ -31,7 +34,24 @@ let TemplatesService = class TemplatesService {
             },
             orderBy: { createdAt: 'asc' },
         });
-        return [...exports.BUILTIN_TEMPLATES, ...dbTemplates];
+        let all = [...exports.BUILTIN_TEMPLATES, ...dbTemplates];
+        if (category) {
+            all = all.filter((t) => t.category === category);
+        }
+        if (tag) {
+            all = all.filter((t) => {
+                if (!t.tags)
+                    return false;
+                try {
+                    const parsed = JSON.parse(t.tags);
+                    return parsed.includes(tag);
+                }
+                catch {
+                    return false;
+                }
+            });
+        }
+        return all;
     }
     async findOne(id) {
         const builtin = exports.BUILTIN_TEMPLATES.find((t) => t.id === id);

@@ -21,8 +21,8 @@ let TemplatesController = class TemplatesController {
     constructor(templatesService) {
         this.templatesService = templatesService;
     }
-    findAll(req, orgId) {
-        return this.templatesService.findAll(req.user.userId, orgId);
+    findAll(req, orgId, category, tag) {
+        return this.templatesService.findAll(req.user.userId, orgId, category, tag);
     }
     findOne(id) {
         return this.templatesService.findOne(id);
@@ -42,8 +42,10 @@ __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Query)('orgId')),
+    __param(2, (0, common_1.Query)('category')),
+    __param(3, (0, common_1.Query)('tag')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, String, String, String]),
     __metadata("design:returntype", void 0)
 ], TemplatesController.prototype, "findAll", null);
 __decorate([

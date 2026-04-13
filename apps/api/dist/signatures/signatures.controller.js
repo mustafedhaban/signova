@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignaturesController = void 0;
+exports.ShareController = exports.SignaturesController = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const signatures_service_1 = require("./signatures.service");
@@ -29,6 +29,9 @@ let SignaturesController = class SignaturesController {
     }
     findOne(req, id) {
         return this.signaturesService.findOne(req.user.userId, id);
+    }
+    getShareLink(req, id) {
+        return this.signaturesService.generateShareLink(req.user.userId, id);
     }
     update(req, id, updateSignatureDto) {
         return this.signaturesService.update(req.user.userId, id, updateSignatureDto);
@@ -62,6 +65,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SignaturesController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.Get)(':id/share'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], SignaturesController.prototype, "getShareLink", null);
+__decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Param)('id')),
@@ -83,4 +94,24 @@ exports.SignaturesController = SignaturesController = __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     __metadata("design:paramtypes", [signatures_service_1.SignaturesService])
 ], SignaturesController);
+let ShareController = class ShareController {
+    constructor(signaturesService) {
+        this.signaturesService = signaturesService;
+    }
+    decodeShare(token) {
+        return this.signaturesService.decodeShareToken(token);
+    }
+};
+exports.ShareController = ShareController;
+__decorate([
+    (0, common_1.Get)(':token'),
+    __param(0, (0, common_1.Param)('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ShareController.prototype, "decodeShare", null);
+exports.ShareController = ShareController = __decorate([
+    (0, common_1.Controller)('share'),
+    __metadata("design:paramtypes", [signatures_service_1.SignaturesService])
+], ShareController);
 //# sourceMappingURL=signatures.controller.js.map
