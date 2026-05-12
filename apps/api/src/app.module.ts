@@ -8,6 +8,7 @@ import { SignaturesModule } from './signatures/signatures.module';
 import { TeamsModule } from './teams/teams.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { TemplatesModule } from './templates/templates.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TemplatesModule } from './templates/templates.module';
     TeamsModule,
     OrganizationsModule,
     TemplatesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -17,6 +17,7 @@ const signatures_module_1 = require("./signatures/signatures.module");
 const teams_module_1 = require("./teams/teams.module");
 const organizations_module_1 = require("./organizations/organizations.module");
 const templates_module_1 = require("./templates/templates.module");
+const users_module_1 = require("./users/users.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,6 +33,7 @@ exports.AppModule = AppModule = __decorate([
             teams_module_1.TeamsModule,
             organizations_module_1.OrganizationsModule,
             templates_module_1.TemplatesModule,
+            users_module_1.UsersModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

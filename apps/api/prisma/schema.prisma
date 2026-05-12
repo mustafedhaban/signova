@@ -39,6 +39,7 @@ model Organization {
   website        String?
   members        OrganizationMember[]
   templates      Template[]
+  signatures     Signature[]
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
 }
@@ -70,27 +71,29 @@ model Template {
 }
 
 model Signature {
-  id          String   @id @default(uuid())
-  name        String
-  title       String?
-  company     String?
-  department  String?
-  phone       String?
-  mobile      String?
-  website     String?
-  email       String
-  address     String?
-  logoUrl     String?
-  socialLinks String?
-  templateId  String
-  primaryColor String?
-  fontFamily   String?
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  teamId      String?
-  team        Team?    @relation(fields: [teamId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String        @id @default(uuid())
+  name           String
+  title          String?
+  company        String?
+  department     String?
+  phone          String?
+  mobile         String?
+  website        String?
+  email          String
+  address        String?
+  logoUrl        String?
+  socialLinks    String?
+  templateId     String
+  primaryColor   String?
+  fontFamily     String?
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  teamId         String?
+  team           Team?         @relation(fields: [teamId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model Team {

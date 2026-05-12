@@ -21,6 +21,7 @@ export declare class SignaturesService {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -42,6 +43,7 @@ export declare class SignaturesService {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -63,6 +65,7 @@ export declare class SignaturesService {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -84,6 +87,7 @@ export declare class SignaturesService {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -105,6 +109,7 @@ export declare class SignaturesService {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;

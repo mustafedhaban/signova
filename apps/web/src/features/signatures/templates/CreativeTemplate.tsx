@@ -13,78 +13,100 @@ const CreativeTemplate: React.FC<{ data: Partial<ISignature> }> = ({ data }) => 
     website,
     logoUrl,
     socialLinks = [],
-    primaryColor = '#7C3AED',
-    fontFamily = 'Arial',
+    primaryColor = '#6366f1',
+    fontFamily = "'Quicksand', 'Rounded Mplus 1c', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
   } = data;
 
   return (
-    <table cellPadding="0" cellSpacing="0" style={{ fontFamily }}>
+    <table cellPadding="0" cellSpacing="0" style={{ fontFamily, borderCollapse: 'collapse' }}>
       <tbody>
         <tr>
           <td>
-            {/* Gradient top bar */}
-            <table cellPadding="0" cellSpacing="0" style={{ width: '100%', marginBottom: '12px' }}>
+            <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
               <tbody>
                 <tr>
-                  <td style={{ height: '5px', background: `linear-gradient(90deg, ${primaryColor}, #EC4899, #F59E0B)`, display: 'block', borderRadius: '3px' }}></td>
-                </tr>
-              </tbody>
-            </table>
-
-            <table cellPadding="0" cellSpacing="0">
-              <tbody>
-                <tr>
-                  {logoUrl && (
-                    <td style={{ verticalAlign: 'top', paddingRight: '14px' }}>
-                      <img src={logoUrl} width="70" style={{ display: 'block', maxWidth: '70px', borderRadius: '50%', border: `2px solid ${primaryColor}` }} alt="Logo" />
-                    </td>
-                  )}
-                  <td style={{ verticalAlign: 'top' }}>
-                    <p style={{ margin: '0 0 1px 0', fontSize: '19px', fontWeight: 'bold', color: '#1F2937' }}>{name}</p>
-                    <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: primaryColor, fontWeight: '600' }}>
-                      {title}{company ? ` @ ${company}` : ''}
-                    </p>
-
-                    <table cellPadding="0" cellSpacing="0">
+                  {/* Left Column: Creative Logo Circle */}
+                  <td style={{ verticalAlign: 'top', paddingRight: '24px' }}>
+                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
                       <tbody>
-                        {phone && (
-                          <tr>
-                            <td style={{ fontSize: '12px', color: '#6B7280', paddingRight: '12px', paddingBottom: '2px' }}>📞 {phone}</td>
-                          </tr>
-                        )}
-                        {mobile && (
-                          <tr>
-                            <td style={{ fontSize: '12px', color: '#6B7280', paddingRight: '12px', paddingBottom: '2px' }}>📱 {mobile}</td>
-                          </tr>
-                        )}
                         <tr>
-                          <td style={{ paddingBottom: '2px' }}>
-                            <a href={`mailto:${email}`} style={{ fontSize: '12px', color: primaryColor, textDecoration: 'none' }}>{email}</a>
+                          <td align="center" style={{ backgroundColor: `${primaryColor}15`, borderRadius: '50%', padding: '12px' }}>
+                            {logoUrl ? (
+                              <img src={logoUrl} width="64" height="64" style={{ display: 'block', borderRadius: '50%', objectFit: 'cover' }} alt="Logo" />
+                            ) : (
+                              <div style={{ width: '64px', height: '64px', backgroundColor: primaryColor, borderRadius: '50%' }} />
+                            )}
                           </td>
                         </tr>
-                        {website && (
+                      </tbody>
+                    </table>
+                  </td>
+
+                  {/* Right Column: Bubbly Content */}
+                  <td style={{ verticalAlign: 'middle' }}>
+                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                      <tbody>
+                        <tr>
+                          <td style={{ paddingBottom: '2px' }}>
+                            <p style={{ margin: '0', fontSize: '22px', fontWeight: '900', color: primaryColor, letterSpacing: '-0.01em' }}>{name}</p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style={{ paddingBottom: '12px' }}>
+                            <p style={{ margin: '0', fontSize: '13px', color: '#64748b', fontWeight: '700' }}>
+                              {title} <span style={{ color: primaryColor }}>@</span> {company}
+                            </p>
+                          </td>
+                        </tr>
+
+                        {/* Creative Contact Pill */}
+                        <tr>
+                          <td style={{ paddingBottom: '16px' }}>
+                            <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                              <tbody>
+                                <tr>
+                                  <td style={{ fontSize: '12px', color: '#64748b', fontWeight: '600' }}>
+                                    <a href={`mailto:${email}`} style={{ color: '#0f172a', textDecoration: 'none' }}>{email}</a>
+                                    {website && (
+                                      <>
+                                        <span style={{ margin: '0 8px', color: '#e2e8f0' }}>•</span>
+                                        <a href={website} style={{ color: primaryColor, textDecoration: 'none', fontWeight: '800' }}>{website.replace(/^https?:\/\//, '')}</a>
+                                      </>
+                                    )}
+                                  </td>
+                                </tr>
+                                {(phone || mobile) && (
+                                  <tr>
+                                    <td style={{ fontSize: '12px', color: '#94a3b8', fontWeight: '500', paddingTop: '4px' }}>
+                                      {phone || mobile}
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+
+                        {/* Floating Social Icons */}
+                        {socialLinks.length > 0 && (
                           <tr>
                             <td>
-                              <a href={website} style={{ fontSize: '12px', color: primaryColor, textDecoration: 'none' }}>{website.replace(/^https?:\/\//, '')}</a>
+                              <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                <tbody>
+                                  <tr>
+                                    {socialLinks.map((link, idx) => (
+                                      <td key={idx} style={{ paddingRight: '12px' }}>
+                                        <SocialIcon platform={link.platform} url={link.url} size={22} bgColor={primaryColor} />
+                                      </td>
+                                    ))}
+                                  </tr>
+                                </tbody>
+                              </table>
                             </td>
                           </tr>
                         )}
                       </tbody>
                     </table>
-
-                    {socialLinks.length > 0 && (
-                      <table cellPadding="0" cellSpacing="0" style={{ marginTop: '8px' }}>
-                        <tbody>
-                          <tr>
-                            {socialLinks.map((link, idx) => (
-                              <td key={idx} style={{ paddingRight: '5px' }}>
-                                <SocialIcon platform={link.platform} url={link.url} size={24} bgColor={primaryColor} />
-                              </td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    )}
                   </td>
                 </tr>
               </tbody>

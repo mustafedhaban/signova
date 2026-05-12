@@ -1,35 +1,34 @@
 import React from 'react';
 import { UseFormRegister, UseFieldArrayRemove, FieldErrors } from 'react-hook-form';
-import { Trash2, Plus } from 'lucide-react';
+import { 
+  Trash2, 
+  Plus, 
+  Linkedin, 
+  Twitter, 
+  Facebook, 
+  Instagram, 
+  Github, 
+  Globe,
+  MoreHorizontal
+} from 'lucide-react';
 import { socialColors } from '../templates/socialIcons';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
-// SVG icons for each platform
 const PlatformIcons: Record<string, React.FC<{ className?: string }>> = {
-  linkedin: ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  ),
-  twitter: ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  ),
-  facebook: ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    </svg>
-  ),
-  instagram: ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
-    </svg>
-  ),
-  github: ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-    </svg>
-  ),
+  linkedin: Linkedin,
+  twitter: Twitter,
+  facebook: Facebook,
+  instagram: Instagram,
+  github: Github,
 };
 
 const platformColors: Record<string, string> = {
@@ -54,6 +53,7 @@ interface SocialLinksEditorProps {
   register: UseFormRegister<any>;
   remove: UseFieldArrayRemove;
   append: (value: { platform: Platform; url: string }) => void;
+  setValue: (name: string, value: any) => void;
   errors?: FieldErrors<any>;
 }
 
@@ -62,99 +62,121 @@ const SocialLinksEditor: React.FC<SocialLinksEditorProps> = ({
   register,
   remove,
   append,
+  setValue,
   errors,
 }) => {
   return (
-    <section>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Social Links</h3>
-        <button
+    <section className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-primary/60 flex items-center">
+          <Globe className="w-3 h-3 mr-2" /> Social Presence
+        </h3>
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => append({ platform: 'linkedin', url: '' })}
-          className="text-xs flex items-center text-blue-600 hover:underline"
+          className="h-8 rounded-lg text-xs font-bold text-primary hover:bg-primary/5 px-2"
         >
-          <Plus className="w-3 h-3 mr-1" />
-          Add Link
-        </button>
+          <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Profile
+        </Button>
       </div>
 
       <div className="space-y-3">
         {fields.map((field, index) => {
           const platform = field.platform as Platform;
-          const Icon = PlatformIcons[platform];
+          const Icon = PlatformIcons[platform] || MoreHorizontal;
           const color = platformColors[platform];
 
           return (
-            <div key={field.id} className="flex items-center space-x-2">
-              {/* Platform selector with icon preview */}
-              <div className="relative">
-                <div className={`absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none ${color}`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <select
-                  {...register(`socialLinks.${index}.platform` as const)}
-                  className="pl-7 pr-2 py-2 border rounded-md bg-background text-sm appearance-none cursor-pointer"
+            <div key={field.id} className="flex items-start space-x-3 group animate-in slide-in-from-right-2 duration-300">
+              <div className="w-[130px] shrink-0">
+                <Select
+                  value={platform}
+                  onValueChange={(val) => setValue(`socialLinks.${index}.platform`, val)}
                 >
-                  {platforms.map((p) => (
-                    <option key={p} value={p}>
-                      {p.charAt(0).toUpperCase() + p.slice(1)}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium transition-all">
+                    <SelectValue>
+                      <div className="flex items-center">
+                        <Icon className={`w-3.5 h-3.5 mr-2 ${color}`} />
+                        <span className="truncate capitalize">{platform}</span>
+                      </div>
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-2">
+                    {platforms.map((p) => {
+                      const PIcon = PlatformIcons[p] || MoreHorizontal;
+                      return (
+                        <SelectItem key={p} value={p} className="rounded-lg">
+                          <div className="flex items-center">
+                            <PIcon className={`w-3.5 h-3.5 mr-2 ${platformColors[p]}`} />
+                            <span className="capitalize">{p}</span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* URL input */}
-              <div className="flex-1">
-                <input
+              <div className="flex-1 space-y-1">
+                <Input
                   {...register(`socialLinks.${index}.url` as const)}
-                  className="w-full p-2 border rounded-md text-sm"
-                  placeholder="https://..."
+                  placeholder="Profile URL (e.g. linkedin.com/in/johndoe)"
+                  className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium transition-all"
                 />
                 {(errors?.socialLinks as any)?.[index]?.url && (
-                  <p className="text-xs text-destructive mt-1">
+                  <p className="text-[10px] font-bold text-destructive px-1">
                     {(errors?.socialLinks as any)?.[index]?.url?.message}
                   </p>
                 )}
               </div>
 
-              {/* Remove button */}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => remove(index)}
-                className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                className="h-11 w-11 rounded-xl text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-all shrink-0"
               >
                 <Trash2 className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           );
         })}
 
         {fields.length === 0 && (
-          <p className="text-xs text-muted-foreground text-center py-4 border border-dashed rounded-md">
-            No social links added yet. Click "Add Link" to get started.
-          </p>
+          <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed rounded-[2rem] bg-muted/20">
+            <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mb-3">
+              <Globe className="w-6 h-6 text-muted-foreground/40" />
+            </div>
+            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest text-center px-6 leading-relaxed">
+              No social profiles linked.<br/>Add your first profile above.
+            </p>
+          </div>
         )}
       </div>
 
-      {/* Icon preview row */}
+      {/* Live Preview */}
       {fields.length > 0 && (
-        <div className="mt-4 flex items-center space-x-2 p-3 bg-muted rounded-md">
-          <span className="text-xs text-muted-foreground mr-1">Preview:</span>
-          {fields.map((field, index) => {
-            const p = field.platform as Platform;
-            const Icon = PlatformIcons[p];
-            const bg = socialColors[p] || '#374151';
-            return (
-              <span
-                key={index}
-                title={p}
-                style={{ backgroundColor: bg }}
-                className={`inline-flex items-center justify-center w-6 h-6 rounded ${!field.url ? 'opacity-30' : ''}`}
-              >
-                <Icon className="w-3.5 h-3.5 text-white" />
-              </span>
-            );
-          })}
+        <div className="mt-6 p-5 bg-white border-2 border-dashed rounded-3xl shadow-soft animate-in zoom-in-95 duration-500">
+          <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-4 block ml-1">Live Social Preview</Label>
+          <div className="flex flex-wrap gap-3">
+            {fields.map((field, index) => {
+              const p = field.platform as Platform;
+              const PIcon = PlatformIcons[p] || MoreHorizontal;
+              const bg = socialColors[p] || '#374151';
+              return (
+                <div
+                  key={index}
+                  style={{ backgroundColor: bg }}
+                  className={`flex items-center justify-center w-9 h-9 rounded-xl shadow-lg transition-all duration-300 ${!field.url ? 'opacity-20 grayscale scale-90' : 'hover:scale-110 hover:-translate-y-1 shadow-black/10'}`}
+                >
+                  <PIcon className="w-4.5 h-4.5 text-white" />
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </section>

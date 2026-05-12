@@ -116,17 +116,17 @@
   - [x] CSV template download
   - [x] Import preview before confirming
 
-- [ ] **Signature Sharing**
-  - [ ] Generate shareable links with pre-filled data
+- [x] **Signature Sharing**
+  - [x] Generate shareable links with pre-filled data
   - [ ] Email invitation system (Resend or Nodemailer)
-  - [ ] Pre-filled signature form from link
+  - [x] Pre-filled signature form from link
   - [ ] Bulk email sending for team invites
 
-- [ ] **User Management Enhancements**
-  - [ ] User profile editing
+- [x] **User Management Enhancements**
+  - [x] User profile editing
   - [ ] Change password
-  - [ ] Account deletion
-  - [ ] Export user data (GDPR compliance)
+  - [x] Account deletion
+  - [x] Export user data (GDPR compliance)
 
 ### Week 6: Installation Guides & Documentation
 - [ ] **Installation Guides**

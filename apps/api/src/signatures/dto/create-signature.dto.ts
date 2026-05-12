@@ -56,6 +56,10 @@ export class CreateSignatureDto {
 
   @IsString()
   templateId: string;
+
+  @IsString()
+  @IsOptional()
+  organizationId?: string;
 }
 
 export class UpdateSignatureDto extends CreateSignatureDto {}

@@ -15,6 +15,7 @@ export declare class CreateSignatureDto {
     logoUrl?: string;
     socialLinks?: SocialLinkDto[];
     templateId: string;
+    organizationId?: string;
 }
 export declare class UpdateSignatureDto extends CreateSignatureDto {
 }

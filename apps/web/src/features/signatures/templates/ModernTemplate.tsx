@@ -13,85 +13,117 @@ const ModernTemplate: React.FC<{ data: Partial<ISignature> }> = ({ data }) => {
     website,
     logoUrl,
     socialLinks = [],
-    primaryColor = '#2563EB',
-    fontFamily = 'Arial',
+    primaryColor = '#6366f1',
+    fontFamily = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
   } = data;
 
   return (
-    <table cellPadding="0" cellSpacing="0" style={{ fontFamily, fontSize: 'medium' }}>
+    <table cellPadding="0" cellSpacing="0" style={{ fontFamily, borderCollapse: 'collapse' }}>
       <tbody>
         <tr>
           <td>
-            {/* Top accent bar */}
+            {/* Minimalist Top Bar */}
             <table cellPadding="0" cellSpacing="0" style={{ width: '100%' }}>
               <tbody>
                 <tr>
-                  <td style={{ backgroundColor: primaryColor, height: '4px', display: 'block', width: '100%' }}></td>
+                  <td style={{ backgroundColor: primaryColor, height: '3px', borderRadius: '4px', display: 'block', width: '60px' }}></td>
                 </tr>
               </tbody>
             </table>
 
-            <table cellPadding="0" cellSpacing="0" style={{ marginTop: '12px' }}>
+            <table cellPadding="0" cellSpacing="0" style={{ marginTop: '20px' }}>
               <tbody>
                 <tr>
-                  {/* Left: logo */}
-                  {logoUrl && (
-                    <td style={{ verticalAlign: 'top', paddingRight: '16px' }}>
-                      <img src={logoUrl} width="80" style={{ display: 'block', maxWidth: '80px', borderRadius: '6px' }} alt="Logo" />
-                    </td>
-                  )}
-                  {/* Right: info */}
+                  {/* Info Column */}
                   <td style={{ verticalAlign: 'top' }}>
-                    <p style={{ margin: '0 0 2px 0', fontSize: '20px', fontWeight: 'bold', color: '#111827', letterSpacing: '-0.3px' }}>
+                    <p style={{ margin: '0 0 2px 0', fontSize: '24px', fontWeight: '900', color: '#0f172a', letterSpacing: '-0.03em' }}>
                       {name}
                     </p>
-                    <p style={{ margin: '0 0 6px 0', fontSize: '13px', color: primaryColor, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      {title}{company ? ` · ${company}` : ''}
+                    <p style={{ margin: '0 0 20px 0', fontSize: '14px', color: '#64748b', fontWeight: '500' }}>
+                      {title} <span style={{ color: primaryColor, margin: '0 4px', fontWeight: '900' }}>/</span> {company}
                     </p>
 
-                    {/* Divider */}
-                    <table cellPadding="0" cellSpacing="0" style={{ width: '100%', marginBottom: '8px' }}>
+                    {/* Horizontal Info Grid */}
+                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
                       <tbody>
                         <tr>
-                          <td style={{ borderBottom: '1px solid #E5E7EB', display: 'block' }}></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    {/* Contact row */}
-                    <table cellPadding="0" cellSpacing="0">
-                      <tbody>
-                        <tr>
-                          {phone && (
-                            <td style={{ paddingRight: '16px', fontSize: '13px', color: '#6B7280' }}>
-                              📞 <span style={{ color: '#374151' }}>{phone}</span>
+                          {logoUrl && (
+                            <td style={{ verticalAlign: 'middle', paddingRight: '20px' }}>
+                              <img src={logoUrl} width="56" height="56" style={{ display: 'block', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${primaryColor}11` }} alt="Logo" />
                             </td>
                           )}
-                          {mobile && (
-                            <td style={{ paddingRight: '16px', fontSize: '13px', color: '#6B7280' }}>
-                              📱 <span style={{ color: '#374151' }}>{mobile}</span>
-                            </td>
-                          )}
-                          <td style={{ paddingRight: '16px', fontSize: '13px' }}>
-                            <a href={`mailto:${email}`} style={{ color: primaryColor, textDecoration: 'none' }}>{email}</a>
+                          <td style={{ verticalAlign: 'middle' }}>
+                            <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                              <tbody>
+                                <tr>
+                                  <td style={{ paddingBottom: '6px' }}>
+                                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                      <tbody>
+                                        <tr>
+                                          <td style={{ paddingRight: '10px' }}>
+                                            <SocialIcon platform="email" url={`mailto:${email}`} size={18} bgColor={primaryColor} />
+                                          </td>
+                                          <td>
+                                            <a href={`mailto:${email}`} style={{ color: '#0f172a', textDecoration: 'none', fontSize: '13px', fontWeight: '600' }}>{email}</a>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                                {(phone || mobile) && (
+                                  <tr>
+                                    <td style={{ paddingBottom: '6px' }}>
+                                      <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                        <tbody>
+                                          <tr>
+                                            <td style={{ paddingRight: '10px' }}>
+                                              <SocialIcon platform="phone" url={`tel:${phone || mobile}`} size={18} bgColor="#0f172a" />
+                                            </td>
+                                            <td>
+                                              <span style={{ color: '#64748b', fontSize: '13px', fontWeight: '500' }}>{phone || mobile}</span>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                )}
+                                {website && (
+                                  <tr>
+                                    <td>
+                                      <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                        <tbody>
+                                          <tr>
+                                            <td style={{ paddingRight: '10px' }}>
+                                              <SocialIcon platform="website" url={website} size={18} bgColor={primaryColor} />
+                                            </td>
+                                            <td>
+                                              <a href={website} style={{ color: primaryColor, textDecoration: 'none', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                {website.replace(/^https?:\/\//, '')}
+                                              </a>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
                           </td>
-                          {website && (
-                            <td style={{ fontSize: '13px' }}>
-                              <a href={website} style={{ color: primaryColor, textDecoration: 'none' }}>{website.replace(/^https?:\/\//, '')}</a>
-                            </td>
-                          )}
                         </tr>
                       </tbody>
                     </table>
 
-                    {/* Social links */}
+                    {/* Social links - minimalist row */}
                     {socialLinks.length > 0 && (
-                      <table cellPadding="0" cellSpacing="0" style={{ marginTop: '8px' }}>
+                      <table cellPadding="0" cellSpacing="0" style={{ marginTop: '24px' }}>
                         <tbody>
                           <tr>
                             {socialLinks.map((link, idx) => (
-                              <td key={idx} style={{ paddingRight: '6px' }}>
-                                <SocialIcon platform={link.platform} url={link.url} size={26} />
+                              <td key={idx} style={{ paddingRight: '10px' }}>
+                                <SocialIcon platform={link.platform} url={link.url} size={20} bgColor="#0f172a" />
                               </td>
                             ))}
                           </tr>

@@ -13,111 +13,134 @@ const StandardTemplate: React.FC<{ data: Partial<ISignature> }> = ({ data }) => 
     website,
     logoUrl,
     socialLinks = [],
-    primaryColor = '#000000',
-    fontFamily = 'Arial',
+    primaryColor = '#6366f1',
+    fontFamily = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
   } = data;
 
   return (
-    <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: '-webkit-baseline-middle', fontSize: 'medium', fontFamily }}>
+    <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: 'middle', borderCollapse: 'collapse', fontFamily }}>
       <tbody>
         <tr>
-          <td>
-            <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: '-webkit-baseline-middle', fontSize: 'medium', fontFamily }}>
+          <td style={{ padding: '0px' }}>
+            <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
               <tbody>
                 <tr>
-                  <td style={{ verticalAlign: 'top' }}>
-                    <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: '-webkit-baseline-middle', fontSize: 'medium', fontFamily }}>
+                  {/* Left Column: Logo */}
+                  <td style={{ verticalAlign: 'top', paddingRight: '24px', borderRight: `2px solid ${primaryColor}22` }}>
+                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
                       <tbody>
                         <tr>
-                          <td style={{ textAlign: 'center' }}>
+                          <td align="center">
                             {logoUrl ? (
-                              <img src={logoUrl} width="100" style={{ display: 'block', maxWidth: '100px' }} alt="Logo" />
+                              <img src={logoUrl} width="80" height="80" style={{ display: 'block', borderRadius: '12px', objectFit: 'cover' }} alt="Logo" />
                             ) : (
-                              <div style={{ width: '100px', height: '100px', backgroundColor: '#eee', borderRadius: '8px' }} />
+                              <div style={{ width: '80px', height: '80px', backgroundColor: `${primaryColor}11`, borderRadius: '12px', border: `1px dashed ${primaryColor}44` }} />
                             )}
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </td>
-                  <td width="30"></td>
-                  <td style={{ padding: '0px', verticalAlign: 'middle' }}>
-                    <h3 style={{ margin: '0px', fontSize: '18px', color: primaryColor }}>
-                      <span>{name}</span>
-                    </h3>
-                    <p style={{ margin: '0px', color: primaryColor, fontSize: '14px', lineHeight: '22px' }}>
-                      <span>{title}</span>
-                    </p>
-                    <p style={{ margin: '0px', fontWeight: 'bold', color: primaryColor, fontSize: '14px', lineHeight: '22px' }}>
-                      <span>{company}</span>
-                    </p>
-                    <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: '-webkit-baseline-middle', fontSize: 'medium', fontFamily, width: '100%' }}>
+
+                  {/* Right Column: Content */}
+                  <td style={{ verticalAlign: 'top', paddingLeft: '24px' }}>
+                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
                       <tbody>
                         <tr>
-                          <td height="10"></td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: '100%', borderBottom: `1px solid ${primaryColor}`, borderLeft: 'none', display: 'block' }}></td>
-                        </tr>
-                        <tr>
-                          <td height="10"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: '-webkit-baseline-middle', fontSize: 'medium', fontFamily }}>
-                      <tbody>
-                        {phone && (
-                          <tr style={{ verticalAlign: 'middle' }}>
-                            <td width="20" style={{ verticalAlign: 'middle' }}>
-                              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>T:</span>
-                            </td>
-                            <td style={{ padding: '0px' }}>
-                              <span style={{ fontSize: '14px', color: primaryColor }}>{phone}</span>
-                            </td>
-                          </tr>
-                        )}
-                        {mobile && (
-                          <tr style={{ verticalAlign: 'middle' }}>
-                            <td width="20" style={{ verticalAlign: 'middle' }}>
-                              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>M:</span>
-                            </td>
-                            <td style={{ padding: '0px' }}>
-                              <span style={{ fontSize: '14px', color: primaryColor }}>{mobile}</span>
-                            </td>
-                          </tr>
-                        )}
-                        <tr style={{ verticalAlign: 'middle' }}>
-                          <td width="20" style={{ verticalAlign: 'middle' }}>
-                            <span style={{ fontSize: '14px', fontWeight: 'bold' }}>E:</span>
-                          </td>
-                          <td style={{ padding: '0px' }}>
-                            <a href={`mailto:${email}`} style={{ textDecoration: 'none', color: primaryColor, fontSize: '14px' }}>{email}</a>
+                          <td style={{ paddingBottom: '4px' }}>
+                            <h2 style={{ margin: '0px', fontSize: '20px', fontWeight: '800', color: '#1e293b', letterSpacing: '-0.02em' }}>
+                              {name}
+                            </h2>
                           </td>
                         </tr>
-                        {website && (
-                          <tr style={{ verticalAlign: 'middle' }}>
-                            <td width="20" style={{ verticalAlign: 'middle' }}>
-                              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>W:</span>
-                            </td>
-                            <td style={{ padding: '0px' }}>
-                              <a href={website} style={{ textDecoration: 'none', color: primaryColor, fontSize: '14px' }}>{website}</a>
+                        <tr>
+                          <td style={{ paddingBottom: '16px' }}>
+                            <p style={{ margin: '0px', fontSize: '13px', fontWeight: '600', color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              {title} <span style={{ color: '#cbd5e1', margin: '0 4px' }}>|</span> {company}
+                            </p>
+                          </td>
+                        </tr>
+                        
+                        {/* Contact Rows */}
+                        <tr>
+                          <td>
+                            <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                              <tbody>
+                                {(phone || mobile) && (
+                                  <tr>
+                                    <td style={{ paddingBottom: '6px' }}>
+                                      <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                        <tbody>
+                                          <tr>
+                                            <td style={{ paddingRight: '12px' }}>
+                                              <SocialIcon platform="phone" url={`tel:${phone || mobile}`} size={20} bgColor={primaryColor} />
+                                            </td>
+                                            <td>
+                                              <span style={{ fontSize: '13px', color: '#64748b', fontWeight: '600' }}>{phone || mobile}</span>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                )}
+                                <tr>
+                                  <td style={{ paddingBottom: '6px' }}>
+                                    <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                      <tbody>
+                                        <tr>
+                                          <td style={{ paddingRight: '12px' }}>
+                                            <SocialIcon platform="email" url={`mailto:${email}`} size={20} bgColor={primaryColor} />
+                                          </td>
+                                          <td>
+                                            <a href={`mailto:${email}`} style={{ textDecoration: 'none', color: '#0f172a', fontSize: '13px', fontWeight: '600' }}>{email}</a>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                                {website && (
+                                  <tr>
+                                    <td style={{ paddingBottom: '12px' }}>
+                                      <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                        <tbody>
+                                          <tr>
+                                            <td style={{ paddingRight: '12px' }}>
+                                              <SocialIcon platform="website" url={website} size={20} bgColor={primaryColor} />
+                                            </td>
+                                            <td>
+                                              <a href={website} style={{ textDecoration: 'none', color: primaryColor, fontSize: '13px', fontWeight: '800' }}>{website.replace(/^https?:\/\//, '')}</a>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+
+                        {/* Social Icons */}
+                        {socialLinks.length > 0 && (
+                          <tr>
+                            <td>
+                              <table cellPadding="0" cellSpacing="0" style={{ borderCollapse: 'collapse' }}>
+                                <tbody>
+                                  <tr>
+                                    {socialLinks.map((link, idx) => (
+                                      <td key={idx} style={{ paddingRight: '8px' }}>
+                                        <SocialIcon platform={link.platform} url={link.url} size={22} bgColor={primaryColor} />
+                                      </td>
+                                    ))}
+                                  </tr>
+                                </tbody>
+                              </table>
                             </td>
                           </tr>
                         )}
-                      </tbody>
-                    </table>
-                    <table cellPadding="0" cellSpacing="0" style={{ verticalAlign: '-webkit-baseline-middle', fontSize: 'medium', fontFamily }}>
-                      <tbody>
-                        <tr>
-                          <td height="10"></td>
-                        </tr>
-                        <tr style={{ verticalAlign: 'middle' }}>
-                          {socialLinks.map((link, idx) => (
-                            <td key={idx} style={{ paddingRight: '6px' }}>
-                              <SocialIcon platform={link.platform} url={link.url} size={26} />
-                            </td>
-                          ))}
-                        </tr>
                       </tbody>
                     </table>
                   </td>

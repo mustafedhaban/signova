@@ -23,9 +23,9 @@ export declare class OrganizationsController {
         } & {
             id: string;
             createdAt: Date;
+            organizationId: string;
             userId: string;
             role: string;
-            organizationId: string;
         })[];
     } & {
         id: string;
@@ -73,9 +73,9 @@ export declare class OrganizationsController {
         } & {
             id: string;
             createdAt: Date;
+            organizationId: string;
             userId: string;
             role: string;
-            organizationId: string;
         })[];
     } & {
         id: string;
@@ -128,16 +128,16 @@ export declare class OrganizationsController {
     } & {
         id: string;
         createdAt: Date;
+        organizationId: string;
         userId: string;
         role: string;
-        organizationId: string;
     }>;
     removeMember(req: any, id: string, memberId: string): Promise<{
         id: string;
         createdAt: Date;
+        organizationId: string;
         userId: string;
         role: string;
-        organizationId: string;
     }>;
     updateBranding(req: any, id: string, dto: UpdateBrandingDto): Promise<{
         id: string;
@@ -156,8 +156,8 @@ export declare class OrganizationsController {
     updateMemberRole(req: any, id: string, memberId: string, role: string): Promise<{
         id: string;
         createdAt: Date;
+        organizationId: string;
         userId: string;
         role: string;
-        organizationId: string;
     }>;
 }

@@ -19,6 +19,7 @@ export declare class SignaturesController {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -40,6 +41,7 @@ export declare class SignaturesController {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -61,6 +63,7 @@ export declare class SignaturesController {
         address: string | null;
         logoUrl: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -85,6 +88,7 @@ export declare class SignaturesController {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;
@@ -106,6 +110,7 @@ export declare class SignaturesController {
         logoUrl: string | null;
         socialLinks: string | null;
         templateId: string;
+        organizationId: string | null;
         primaryColor: string | null;
         fontFamily: string | null;
         userId: string;

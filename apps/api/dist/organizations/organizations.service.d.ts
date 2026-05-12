@@ -21,9 +21,9 @@ export declare class OrganizationsService {
         } & {
             id: string;
             createdAt: Date;
+            organizationId: string;
             userId: string;
             role: string;
-            organizationId: string;
         })[];
     } & {
         id: string;
@@ -71,9 +71,9 @@ export declare class OrganizationsService {
         } & {
             id: string;
             createdAt: Date;
+            organizationId: string;
             userId: string;
             role: string;
-            organizationId: string;
         })[];
     } & {
         id: string;
@@ -140,23 +140,23 @@ export declare class OrganizationsService {
     } & {
         id: string;
         createdAt: Date;
+        organizationId: string;
         userId: string;
         role: string;
-        organizationId: string;
     }>;
     removeMember(userId: string, orgId: string, memberId: string): Promise<{
         id: string;
         createdAt: Date;
+        organizationId: string;
         userId: string;
         role: string;
-        organizationId: string;
     }>;
     updateMemberRole(userId: string, orgId: string, memberId: string, role: string): Promise<{
         id: string;
         createdAt: Date;
+        organizationId: string;
         userId: string;
         role: string;
-        organizationId: string;
     }>;
     private assertMember;
     private assertRole;
