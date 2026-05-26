@@ -1,1 +1,0 @@
-import{f as e,h as t,l as n}from"./dist-Bk29Ucfc.js";var r=t(e(),1),i=()=>{let e=n();return(0,r.useEffect)(()=>{e(`/login`)},[e]),null};export{i as default};

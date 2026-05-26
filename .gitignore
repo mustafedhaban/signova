@@ -1,1 +1,35 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local dev database (SQLite — not shared project data)
+apps/api/prisma/dev.db
+apps/api/prisma/*.db-journal
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Frontend build output
+apps/web/dist/
+.vite/
+
+# IDE / editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Cursor local state
+.cursor/
