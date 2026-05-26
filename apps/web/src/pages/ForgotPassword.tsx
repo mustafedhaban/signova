@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import AuthLayout from '@/components/AuthLayout';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -40,11 +41,10 @@ const ForgotPasswordPage: React.FC = () => {
 
   if (resetToken) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-muted/30 p-4">
-        <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <AuthLayout>
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-green-200">
-              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-success/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-success/20">
+              <CheckCircle2 className="w-8 h-8 text-success" />
             </div>
             <h1 className="text-3xl font-black tracking-tight text-primary">Check your email</h1>
             <p className="text-muted-foreground font-medium">We've sent a reset link to your inbox</p>
@@ -73,14 +73,12 @@ const ForgotPasswordPage: React.FC = () => {
               </Link>
             </CardFooter>
           </Card>
-        </div>
-      </div>
+      </AuthLayout>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-muted/30 p-4">
-      <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <AuthLayout>
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-primary/5">
             <ShieldCheck className="w-8 h-8 text-primary" />
@@ -137,8 +135,7 @@ const ForgotPasswordPage: React.FC = () => {
             </Link>
           </CardFooter>
         </Card>
-      </div>
-    </div>
+    </AuthLayout>
   );
 };
 

@@ -40,7 +40,7 @@ const TemplateThumbnail: React.FC<TemplateThumbnailProps> = ({ template, selecte
       {/* Thumbnail preview */}
       <div
         ref={containerRef}
-        className="relative bg-white overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]"
+        className="relative bg-card overflow-hidden transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transform-none"
         style={{ height: '110px' }}
         aria-hidden="true"
       >

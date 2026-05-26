@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import AuthLayout from '@/components/AuthLayout';
 
 const RegisterPage: React.FC = () => {
   const { login } = useAuth();
@@ -51,8 +52,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-muted/30 p-4">
-      <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <AuthLayout>
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-primary/5">
             <ShieldCheck className="w-8 h-8 text-primary" />
@@ -140,8 +140,7 @@ const RegisterPage: React.FC = () => {
         <p className="text-center text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">
           &copy; 2026 Signova Inc. All rights reserved.
         </p>
-      </div>
-    </div>
+    </AuthLayout>
   );
 };
 

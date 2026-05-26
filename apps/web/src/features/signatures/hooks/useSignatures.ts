@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { ISignature } from '@signova/types';
+import { toSignatureApiPayload } from '../utils/api-payload';
 
 const API_URL = 'http://localhost:3000/api/v1/signatures';
 
@@ -17,7 +18,10 @@ export const useSignatures = () => {
 
   const createSignatureMutation = useMutation({
     mutationFn: async (newSignature: Partial<ISignature>) => {
-      const response = await axios.post(API_URL, newSignature);
+      const response = await axios.post(
+        API_URL,
+        toSignatureApiPayload(newSignature as Record<string, unknown>),
+      );
       return response.data;
     },
     onSuccess: () => {
@@ -38,7 +42,7 @@ export const useSignatures = () => {
     signatures: signaturesQuery.data ?? [],
     isLoading: signaturesQuery.isLoading,
     isError: signaturesQuery.isError,
-    createSignature: createSignatureMutation.mutate,
-    deleteSignature: deleteSignatureMutation.mutate,
+    createSignature: createSignatureMutation.mutateAsync,
+    deleteSignature: deleteSignatureMutation.mutateAsync,
   };
 };

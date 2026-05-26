@@ -25,7 +25,7 @@ import {
 
 interface SignatureCardProps {
   signature: ISignature;
-  onDelete: (id: string) => void;
+  onDelete: (id: string, name?: string) => void;
   onEdit: (id: string) => void;
 }
 
@@ -71,7 +71,7 @@ const SignatureCard: React.FC<SignatureCardProps> = ({ signature, onDelete, onEd
             </div>
           </div>
           
-          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+          <div className="flex items-center space-x-1 opacity-100 transition-all duration-300 lg:opacity-0 lg:translate-x-2 lg:group-hover:translate-x-0 lg:group-hover:opacity-100">
             <Button
               variant="ghost"
               size="icon"
@@ -94,7 +94,7 @@ const SignatureCard: React.FC<SignatureCardProps> = ({ signature, onDelete, onEd
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onClick={() => onDelete(signature.id)} 
+                  onClick={() => onDelete(signature.id, signature.name)} 
                   className="rounded-lg cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
@@ -121,7 +121,7 @@ const SignatureCard: React.FC<SignatureCardProps> = ({ signature, onDelete, onEd
             className={cn(
               "w-full h-11 rounded-xl font-bold transition-all duration-300 active:scale-[0.98] border-2 shadow-sm",
               copied 
-                ? "bg-green-500 text-white border-green-500 hover:bg-green-600 shadow-green-500/20" 
+                ? "border-success bg-success text-success-foreground hover:bg-success/90 shadow-success/20" 
                 : "bg-background text-foreground border-border hover:bg-muted hover:border-border"
             )}
           >

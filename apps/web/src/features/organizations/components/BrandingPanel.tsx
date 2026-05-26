@@ -81,7 +81,7 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({ org, canEdit, onSave }) =
                 className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium transition-all"
               />
               {form.logoUrl && (
-                <div className="mt-2 p-2 bg-white rounded-xl border-2 border-border/50 inline-block shadow-sm">
+                <div className="mt-2 p-2 bg-card rounded-xl border-2 border-border/50 inline-block shadow-sm">
                   <img src={form.logoUrl} alt="Logo preview" className="h-10 object-contain" />
                 </div>
               )}
@@ -206,12 +206,12 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({ org, canEdit, onSave }) =
         <section className="space-y-4">
           <Label className="text-[10px] font-bold uppercase tracking-widest text-primary/60 ml-1">Live Branding Preview</Label>
           <div
-            className="p-8 bg-white border-2 border-dashed border-border rounded-3xl shadow-soft transition-all duration-500 overflow-hidden"
+            className="p-8 bg-card border-2 border-dashed border-border rounded-3xl shadow-soft transition-all duration-500 overflow-hidden"
             style={{ fontFamily: form.fontFamily, fontSize: `${form.fontSize}px` }}
           >
             <div className="flex items-center space-x-6">
               {form.logoUrl ? (
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border p-2">
+                <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center shadow-sm border p-2">
                   <img src={form.logoUrl} alt="logo" className="max-h-full max-w-full object-contain" />
                 </div>
               ) : (
@@ -239,7 +239,7 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({ org, canEdit, onSave }) =
             variant={saved ? 'secondary' : 'default'} 
             onClick={handleSave} 
             className={`w-full h-12 rounded-2xl font-bold shadow-lg transition-all active:scale-[0.98] ${
-              saved ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-500/20' : 'shadow-primary/20'
+              saved ? 'bg-success text-success-foreground hover:bg-success/90 shadow-success/20' : 'shadow-primary/20'
             }`}
           >
             {saved ? '✓ Branding Applied' : 'Save & Apply Branding'}

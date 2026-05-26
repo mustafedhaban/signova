@@ -104,11 +104,11 @@ const SharedSignature: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-400 shadow-sm" />
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-sm" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400 shadow-sm" />
+                <div className="h-2.5 w-2.5 rounded-full bg-success shadow-sm" />
               </div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30">Live Signature Preview</div>
            </div>
-           <div className="bg-white p-10 lg:p-16 shadow-soft rounded-[2rem] border min-h-[300px] flex items-center justify-center transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/5">
+           <div className="bg-card p-10 lg:p-16 shadow-soft rounded-[2rem] border min-h-[300px] flex items-center justify-center transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/5">
             <template.component data={data} />
           </div>
         </div>
@@ -118,7 +118,7 @@ const SharedSignature: React.FC = () => {
           <Button 
             className={cn(
               "h-14 rounded-2xl font-bold text-base shadow-xl transition-all active:scale-95 sm:col-span-1",
-              copied ? "bg-green-500 hover:bg-green-600 shadow-green-500/20" : "shadow-primary/20"
+              copied ? "bg-success hover:bg-success/90 shadow-success/20" : "shadow-primary/20"
             )}
             onClick={handleCopy}
           >

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateSignatureDto = exports.CreateSignatureDto = exports.SocialLinkDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const emptyToUndefined = ({ value }) => value === '' || value === null ? undefined : value;
 class SocialLinkDto {
 }
 exports.SocialLinkDto = SocialLinkDto;
@@ -56,7 +57,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateSignatureDto.prototype, "mobile", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_transformer_1.Transform)(emptyToUndefined),
+    (0, class_validator_1.IsUrl)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateSignatureDto.prototype, "website", void 0);
@@ -70,6 +72,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateSignatureDto.prototype, "address", void 0);
 __decorate([
+    (0, class_transformer_1.Transform)(emptyToUndefined),
     (0, class_validator_1.IsUrl)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
@@ -86,10 +89,21 @@ __decorate([
     __metadata("design:type", String)
 ], CreateSignatureDto.prototype, "templateId", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_transformer_1.Transform)(emptyToUndefined),
+    (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateSignatureDto.prototype, "organizationId", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateSignatureDto.prototype, "primaryColor", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateSignatureDto.prototype, "fontFamily", void 0);
 class UpdateSignatureDto extends CreateSignatureDto {
 }
 exports.UpdateSignatureDto = UpdateSignatureDto;

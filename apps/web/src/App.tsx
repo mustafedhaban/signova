@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/features/auth/hooks/useAuth';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ThemeProvider } from 'next-themes';
+import PageLoading from '@/components/PageLoading';
 
 // Lazy load pages for performance
 const LoginPage = lazy(() => import('@/pages/Login'));
@@ -20,15 +21,8 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <AuthProvider>
-        <div className="min-h-screen bg-background font-sans antialiased text-foreground">
-        <Suspense fallback={
-          <div className="h-screen w-full flex items-center justify-center bg-background">
-            <div className="flex flex-col items-center space-y-4">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Loading Signova...</p>
-            </div>
-          </div>
-        }>
+        <div className="min-h-screen w-full bg-background font-sans antialiased text-foreground">
+        <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />

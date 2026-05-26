@@ -91,9 +91,9 @@ const OrganizationSettings: React.FC = () => {
 
   return (
     <AppLayout defaultTab="settings">
-      {() => (
+      {(_activeTab, _setActiveTab, openSidebar) => (
         <div className="flex flex-col h-full overflow-hidden">
-          <Navbar title="Organization Settings" />
+          <Navbar title="Organization Settings" onMenuClick={openSidebar} />
           <div className="flex-1 overflow-y-auto p-8 bg-muted/30">
             <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
 

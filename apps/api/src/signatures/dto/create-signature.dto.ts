@@ -1,5 +1,8 @@
-import { IsString, IsOptional, IsEmail, IsUrl, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsEmail, IsUrl, IsArray, ValidateNested, IsUUID } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
+
+const emptyToUndefined = ({ value }: { value: unknown }) =>
+  value === '' || value === null ? undefined : value;
 
 export class SocialLinkDto {
   @IsString()
@@ -33,7 +36,8 @@ export class CreateSignatureDto {
   @IsOptional()
   mobile?: string;
 
-  @IsString()
+  @Transform(emptyToUndefined)
+  @IsUrl()
   @IsOptional()
   website?: string;
 
@@ -44,6 +48,7 @@ export class CreateSignatureDto {
   @IsOptional()
   address?: string;
 
+  @Transform(emptyToUndefined)
   @IsUrl()
   @IsOptional()
   logoUrl?: string;
@@ -57,9 +62,18 @@ export class CreateSignatureDto {
   @IsString()
   templateId: string;
 
-  @IsString()
+  @Transform(emptyToUndefined)
+  @IsUUID()
   @IsOptional()
   organizationId?: string;
+
+  @IsString()
+  @IsOptional()
+  primaryColor?: string;
+
+  @IsString()
+  @IsOptional()
+  fontFamily?: string;
 }
 
 export class UpdateSignatureDto extends CreateSignatureDto {}

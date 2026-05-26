@@ -63,9 +63,9 @@ const Settings: React.FC = () => {
 
   return (
     <AppLayout defaultTab="settings">
-      {() => (
+      {(_activeTab, _setActiveTab, openSidebar) => (
         <>
-          <Navbar title="Settings" />
+          <Navbar title="Settings" onMenuClick={openSidebar} />
           <div className="flex-1 overflow-y-auto p-8 bg-muted/30">
             <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
@@ -128,8 +128,8 @@ const Settings: React.FC = () => {
                   )}
 
                   {saveSuccess && (
-                    <Alert className="rounded-2xl border-2 border-green-200 bg-green-50 text-green-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <Alert className="rounded-2xl border-2 border-success/30 bg-success/10 text-success">
+                      <CheckCircle2 className="h-4 w-4 text-success" />
                       <AlertDescription className="font-bold">Profile updated successfully!</AlertDescription>
                     </Alert>
                   )}
@@ -139,7 +139,7 @@ const Settings: React.FC = () => {
                     disabled={isSaving}
                     className={`w-full sm:w-auto h-12 px-10 rounded-2xl font-bold transition-all shadow-xl active:scale-95 ${
                       saveSuccess 
-                        ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-500/20' 
+                        ? 'bg-success text-success-foreground hover:bg-success/90 shadow-success/20' 
                         : 'shadow-primary/20'
                     }`}
                   >
@@ -199,7 +199,7 @@ const Settings: React.FC = () => {
                       <Trash2 className="w-4 h-4 mr-2" /> Delete My Account
                     </Button>
                   ) : (
-                    <div className="space-y-6 p-6 border-2 border-destructive/20 rounded-3xl bg-white animate-in zoom-in-95 duration-300">
+                    <div className="space-y-6 p-6 border-2 border-destructive/20 rounded-3xl bg-card animate-in zoom-in-95 duration-300">
                       <div className="flex items-start space-x-4">
                         <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
                           <Trash2 className="w-5 h-5 text-destructive" />

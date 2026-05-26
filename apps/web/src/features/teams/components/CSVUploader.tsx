@@ -196,7 +196,7 @@ const CSVUploader: React.FC = () => {
           <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Badge variant="secondary" className="rounded-lg text-[10px] font-bold px-2 py-0.5 border-2 uppercase tracking-widest bg-green-50 text-green-700 border-green-200">
+                <Badge variant="secondary" className="rounded-lg text-[10px] font-bold px-2 py-0.5 border-2 uppercase tracking-widest bg-success/10 text-success border-success/30">
                   {validRows.length} valid
                 </Badge>
                 {invalidRows.length > 0 && (
@@ -236,8 +236,8 @@ const CSVUploader: React.FC = () => {
                         <td className="px-4 py-3">
                           <div className="flex justify-center">
                             {row.valid ? (
-                              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                              <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-success" />
                               </div>
                             ) : (
                               <div className="w-6 h-6 bg-destructive/10 rounded-full flex items-center justify-center" title={row.errors.join(', ')}>
@@ -278,8 +278,8 @@ const CSVUploader: React.FC = () => {
 
         {/* Success */}
         {importResult && (
-          <Alert className="rounded-2xl border-2 border-green-200 bg-green-50 text-green-700">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          <Alert className="rounded-2xl border-2 border-success/30 bg-success/10 text-success">
+            <CheckCircle2 className="h-4 w-4 text-success" />
             <AlertTitle className="font-bold">Import Successful</AlertTitle>
             <AlertDescription className="text-xs font-medium">
               Successfully imported {importResult.count} signature{importResult.count !== 1 ? 's' : ''}!

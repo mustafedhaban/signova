@@ -4,6 +4,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import AuthLayout from '@/components/AuthLayout';
 
 const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -40,8 +41,7 @@ const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-muted/30 p-4">
-      <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <AuthLayout>
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-primary/5">
             <ShieldCheck className="w-8 h-8 text-primary" />
@@ -85,8 +85,7 @@ const ResetPasswordPage: React.FC = () => {
             </Link>
           </CardFooter>
         </Card>
-      </div>
-    </div>
+    </AuthLayout>
   );
 };
 

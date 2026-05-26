@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'signatures', onTabChange
                     "w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
                     isActive ? 'bg-primary/10' : 'group-hover:bg-muted'
                   )}>
-                    <Icon className={cn("w-4.5 h-4.5 transition-colors", isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
+                    <Icon className={cn("h-[18px] w-[18px] transition-colors", isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
                   </div>
                   <span className="tracking-tight">{label}</span>
                 </div>
@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'signatures', onTabChange
                   {user?.name?.charAt(0)?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-background rounded-full" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success border-2 border-background rounded-full" />
             </div>
             <div className="min-w-0">
               <p className="truncate font-black text-foreground text-[11px] leading-none mb-1 uppercase tracking-wider">{user?.name}</p>

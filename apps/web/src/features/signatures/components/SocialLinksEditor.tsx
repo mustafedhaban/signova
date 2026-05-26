@@ -159,7 +159,7 @@ const SocialLinksEditor: React.FC<SocialLinksEditorProps> = ({
 
       {/* Live Preview */}
       {fields.length > 0 && (
-        <div className="mt-6 p-5 bg-white border-2 border-dashed rounded-3xl shadow-soft animate-in zoom-in-95 duration-500">
+        <div className="mt-6 p-5 bg-card border-2 border-dashed rounded-3xl shadow-soft animate-in zoom-in-95 duration-500">
           <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-4 block ml-1">Live Social Preview</Label>
           <div className="flex flex-wrap gap-3">
             {fields.map((field, index) => {
@@ -172,7 +172,7 @@ const SocialLinksEditor: React.FC<SocialLinksEditorProps> = ({
                   style={{ backgroundColor: bg }}
                   className={`flex items-center justify-center w-9 h-9 rounded-xl shadow-lg transition-all duration-300 ${!field.url ? 'opacity-20 grayscale scale-90' : 'hover:scale-110 hover:-translate-y-1 shadow-black/10'}`}
                 >
-                  <PIcon className="w-4.5 h-4.5 text-white" />
+                  <PIcon className="h-[18px] w-[18px] text-white" />
                 </div>
               );
             })}

@@ -1,16 +1,20 @@
 {
   "name": "signova",
   "version": "1.0.0",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "npm run dev --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "overrides": {
-    "picomatch": "^4.0.4"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.1.2",
+      "onFail": "download"
+    }
+  },
+  "type": "module"
 }

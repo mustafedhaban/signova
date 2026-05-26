@@ -18,13 +18,18 @@ let SignaturesService = class SignaturesService {
         this.prisma = prisma;
         this.configService = configService;
     }
+    toPrismaData(dto, userId) {
+        const { socialLinks, organizationId, ...rest } = dto;
+        return {
+            ...rest,
+            userId,
+            organizationId: organizationId ?? null,
+            socialLinks: JSON.stringify(socialLinks ?? []),
+        };
+    }
     async create(userId, createSignatureDto) {
         return this.prisma.signature.create({
-            data: {
-                ...createSignatureDto,
-                userId,
-                socialLinks: JSON.stringify(createSignatureDto.socialLinks),
-            },
+            data: this.toPrismaData(createSignatureDto, userId),
         });
     }
     async findAll(userId) {
@@ -54,11 +59,13 @@ let SignaturesService = class SignaturesService {
     }
     async update(userId, id, updateSignatureDto) {
         await this.findOne(userId, id);
+        const { socialLinks, organizationId, ...rest } = updateSignatureDto;
         return this.prisma.signature.update({
             where: { id },
             data: {
-                ...updateSignatureDto,
-                socialLinks: JSON.stringify(updateSignatureDto.socialLinks),
+                ...rest,
+                organizationId: organizationId ?? null,
+                socialLinks: JSON.stringify(socialLinks ?? []),
             },
         });
     }

@@ -5,6 +5,7 @@ export declare class SignaturesService {
     private prisma;
     private configService;
     constructor(prisma: PrismaService, configService: ConfigService);
+    private toPrismaData;
     create(userId: string, createSignatureDto: CreateSignatureDto): Promise<{
         id: string;
         email: string;

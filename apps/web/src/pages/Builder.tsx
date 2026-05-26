@@ -38,6 +38,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { toSignatureApiPayload } from '@/features/signatures/utils/api-payload';
 
 // Derive all unique categories from the templates list
 const ALL_CATEGORIES = ['all', ...Array.from(new Set(templates.map((t) => t.category)))];
@@ -142,6 +143,7 @@ const Builder: React.FC = () => {
   const { signatures, createSignature } = useSignatures();
   const { organizations } = useOrganizations();
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('info');
 
@@ -261,17 +263,32 @@ const Builder: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     setIsSaving(true);
+    setSaveError(null);
+    const payload = toSignatureApiPayload(data as Record<string, unknown>);
     try {
       if (id === 'new') {
-        await createSignature(data as any);
+        await createSignature(payload as Partial<typeof data>);
       } else {
-        await axios.patch(`http://localhost:3000/api/v1/signatures/${id}`, data);
+        await axios.patch(
+          `http://localhost:3000/api/v1/signatures/${id}`,
+          payload,
+        );
       }
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
       navigate('/');
     } catch (error) {
       console.error('Error saving signature:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : null;
+      setSaveError(
+        Array.isArray(message)
+          ? message.join(', ')
+          : typeof message === 'string'
+            ? message
+            : 'Failed to save signature. Please try again.',
+      );
     } finally {
       setIsSaving(false);
     }
@@ -294,12 +311,17 @@ const Builder: React.FC = () => {
         </div>
         <div className="flex items-center space-x-3">
           {saveSuccess && (
-            <div className="flex items-center px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-bold animate-in fade-in slide-in-from-right-4 border border-green-100">
+            <div className="flex items-center px-3 py-1.5 bg-success/10 text-success rounded-lg text-xs font-bold animate-in fade-in slide-in-from-right-4 border border-success/20">
               <CheckCircle2 className="w-4 h-4 mr-2" />
               <span>Saved!</span>
             </div>
           )}
-          
+          {saveError && (
+            <div className="max-w-xs px-3 py-1.5 bg-destructive/10 text-destructive rounded-lg text-xs font-bold border border-destructive/20">
+              {saveError}
+            </div>
+          )}
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -335,7 +357,7 @@ const Builder: React.FC = () => {
 
       <div className="flex flex-1 flex-col lg:flex-row overflow-hidden h-full">
         {/* Sidebar - Form */}
-        <aside className="w-full lg:w-[420px] h-[50vh] lg:h-full border-r bg-card flex flex-col shrink-0 overflow-hidden relative z-20 shadow-xl">
+        <aside className="relative z-20 flex h-auto min-h-[min(50vh,480px)] w-full shrink-0 flex-col overflow-hidden border-r bg-card shadow-xl lg:h-full lg:min-h-0 lg:w-[420px]">
           <div className="p-6 border-b flex items-center justify-between bg-card/80 backdrop-blur-md sticky top-0 z-30">
             <div>
               <h2 className="text-xl font-bold tracking-tight">Editor</h2>
@@ -590,11 +612,11 @@ const Builder: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                <div className="h-2.5 w-2.5 rounded-full bg-success" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-950 p-10 rounded-3xl border-2 border-border/30 shadow-inner min-h-[240px] flex items-center justify-center overflow-auto">
+            <div className="bg-card p-10 rounded-3xl border-2 border-border/30 shadow-inner min-h-[240px] flex items-center justify-center overflow-auto">
               {currentTemplate ? (
                 <div className="w-full transition-all duration-500 animate-in-fade">
                   <currentTemplate.component data={watchedData as any} />
