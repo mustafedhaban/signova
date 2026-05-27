@@ -1,140 +1,144 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { forgotPassword } from '@/features/auth/lib/auth-api';
+import { AuthFormCard } from '@/features/auth/components/auth-form-card';
+import { AuthIconField } from '@/features/auth/components/auth-icon-field';
+import { AuthPageHeader } from '@/features/auth/components/auth-page-header';
 import AuthLayout from '@/components/AuthLayout';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { FieldGroup } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { AlertCircle, ArrowRight, CheckCircle2, Mail } from 'lucide-react';
 
-const ForgotPasswordPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [resetToken, setResetToken] = useState('');
+const schema = z.object({
+  email: z.string().min(1, 'Email is required.').email('Please enter a valid email address.'),
+});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+type FormValues = z.infer<typeof schema>;
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
-      return;
-    }
+const ForgotPasswordPage = () => {
+  const [serverError, setServerError] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [devResetUrl, setDevResetUrl] = useState('');
 
-    setIsLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: '' },
+  });
+
+  const onSubmit = async (values: FormValues) => {
+    setServerError('');
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json();
-      // Show the token directly (in production this would be emailed)
-      setResetToken(data.resetToken || '');
+      const result = await forgotPassword(values.email);
+      if (!result.ok) {
+        setServerError(result.data.message ?? 'Something went wrong. Please try again.');
+        return;
+      }
+      setDevResetUrl(result.data.devResetUrl ?? '');
+      setSubmitted(true);
     } catch {
-      setError('Unable to connect. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setServerError('Unable to connect. Please try again.');
     }
   };
 
-  if (resetToken) {
+  if (submitted) {
     return (
       <AuthLayout>
-          <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-success/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-success/20">
-              <CheckCircle2 className="w-8 h-8 text-success" />
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-primary">Check your email</h1>
-            <p className="text-muted-foreground font-medium">We've sent a reset link to your inbox</p>
-          </div>
-
-          <Card className="border-2 shadow-soft rounded-[2rem] overflow-hidden">
-            <CardHeader className="bg-muted/20 pb-6 border-b border-border/50">
-              <CardTitle className="text-xl font-bold">Development Mode</CardTitle>
-              <CardDescription className="font-medium">
-                In production, this token would be emailed to you.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-8 space-y-6">
-              <div className="p-4 bg-muted/40 rounded-2xl border-2 border-dashed border-border/50 break-all text-xs font-mono text-muted-foreground leading-relaxed">
-                {resetToken}
-              </div>
-              <Link to={`/reset-password?token=${resetToken}`}>
-                <Button className="w-full h-12 rounded-2xl font-bold text-base shadow-xl shadow-primary/20 transition-all active:scale-95">
-                  Continue to Reset <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-            <CardFooter className="justify-center border-t border-border/50 bg-muted/10 py-6">
-              <Link to="/login" className="text-sm font-bold text-primary hover:underline decoration-2 underline-offset-4">
+        <div className="space-y-6">
+          <AuthPageHeader tagline="If an account exists, we sent reset instructions" />
+          <AuthFormCard
+            title="Check your email"
+            description="Follow the link in the message to choose a new password"
+            footer={
+              <Link to="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
                 Back to sign in
               </Link>
-            </CardFooter>
-          </Card>
+            }
+          >
+            <div className="flex flex-col items-center gap-4 text-center">
+              <span className="flex size-12 items-center justify-center rounded-full bg-success/10 text-success">
+                <CheckCircle2 className="size-6" />
+              </span>
+              {devResetUrl ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Development mode: use this link to reset locally.
+                  </p>
+                  <Link
+                    to={devResetUrl}
+                    className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                  >
+                    Continue to reset password
+                    <ArrowRight className="size-4" />
+                  </Link>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Did not receive it? Check spam or try again in a few minutes.
+                </p>
+              )}
+            </div>
+          </AuthFormCard>
+        </div>
       </AuthLayout>
     );
   }
 
   return (
     <AuthLayout>
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-primary/5">
-            <ShieldCheck className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="text-3xl font-black tracking-tight text-primary">Reset Password</h1>
-          <p className="text-muted-foreground font-medium">Don't worry, it happens to the best of us</p>
-        </div>
-
-        <Card className="border-2 shadow-soft rounded-[2rem] overflow-hidden">
-          <CardHeader className="space-y-1 pb-6 border-b border-border/50 bg-muted/20">
-            <CardTitle className="text-2xl font-bold">Forgot password?</CardTitle>
-            <CardDescription className="font-medium">Enter your email and we'll send you a link</CardDescription>
-          </CardHeader>
-
-          <CardContent className="pt-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-bold text-muted-foreground ml-1 uppercase tracking-widest">
-                  Email Address
-                </Label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@company.com"
-                    autoComplete="email"
-                    className="pl-11 bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-12 font-medium transition-all"
-                  />
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-4 bg-destructive/10 border-2 border-destructive/20 rounded-xl text-xs font-bold text-destructive animate-in shake-1 duration-300">
-                  {error}
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                disabled={isLoading}
-                className="w-full h-12 rounded-2xl font-bold text-base shadow-xl shadow-primary/20 transition-all active:scale-95"
-              >
-                {isLoading ? 'Sending Link...' : 'Send Reset Link'}
-              </Button>
-            </form>
-          </CardContent>
-
-          <CardFooter className="justify-center border-t border-border/50 bg-muted/10 py-6">
-            <Link to="/login" className="text-sm font-bold text-primary hover:underline decoration-2 underline-offset-4">
+      <div className="space-y-6">
+        <AuthPageHeader tagline="We will email you a link to reset your password" />
+        <AuthFormCard
+          title="Forgot password?"
+          description="Enter the email associated with your account"
+          footer={
+            <Link to="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
               Back to sign in
             </Link>
-          </CardFooter>
-        </Card>
+          }
+        >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+            <FieldGroup>
+              <AuthIconField id="email" label="Email" icon={<Mail />} error={errors.email}>
+                <Input
+                  type="email"
+                  autoComplete="email"
+                  placeholder="name@company.com"
+                  {...register('email')}
+                />
+              </AuthIconField>
+            </FieldGroup>
+
+            {serverError ? (
+              <Alert variant="destructive">
+                <AlertCircle className="size-4" />
+                <AlertTitle>Request failed</AlertTitle>
+                <AlertDescription>{serverError}</AlertDescription>
+              </Alert>
+            ) : null}
+
+            <Button type="submit" disabled={isSubmitting} className="h-10 w-full" size="lg">
+              {isSubmitting ? (
+                <>
+                  <Spinner className="mr-2" />
+                  Sending…
+                </>
+              ) : (
+                'Send reset link'
+              )}
+            </Button>
+          </form>
+        </AuthFormCard>
+      </div>
     </AuthLayout>
   );
 };

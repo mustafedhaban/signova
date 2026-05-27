@@ -1,15 +1,15 @@
-import React from 'react';
+import { Spinner } from '@/components/ui/spinner';
 
 interface PageLoadingProps {
   label?: string;
 }
 
-const PageLoading: React.FC<PageLoadingProps> = ({ label = 'Loading Signova...' }) => {
+const PageLoading = ({ label = 'Loading…' }: PageLoadingProps) => {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-background">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{label}</p>
+      <div className="flex flex-col items-center gap-3">
+        <Spinner className="size-8" />
+        <p className="text-sm text-muted-foreground">{label}</p>
       </div>
     </div>
   );

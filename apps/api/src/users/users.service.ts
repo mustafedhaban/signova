@@ -9,10 +9,19 @@ export class UsersService {
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, name: true, avatarUrl: true, provider: true, createdAt: true },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatarUrl: true,
+        provider: true,
+        createdAt: true,
+        passwordHash: true,
+      },
     });
     if (!user) throw new NotFoundException('User not found');
-    return user;
+    const { passwordHash, ...rest } = user;
+    return { ...rest, hasPassword: !!passwordHash };
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {

@@ -1,52 +1,34 @@
-import React, { useState } from 'react';
-import Sidebar from './Sidebar';
+import { useSearchParams } from 'react-router-dom';
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 interface AppLayoutProps {
   children: (
     activeTab: string,
     setActiveTab: (tab: string) => void,
-    openSidebar: () => void,
   ) => React.ReactNode;
   defaultTab?: string;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children, defaultTab = 'signatures' }) => {
-  const [activeTab, setActiveTab] = useState(defaultTab);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+const AppLayout = ({ children, defaultTab = 'signatures' }: AppLayoutProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || defaultTab;
 
-  const openSidebar = () => setSidebarOpen(true);
+  const setActiveTab = (tab: string) => {
+    setSearchParams({ tab });
+  };
 
   return (
-    <div className="flex min-h-screen w-full overflow-hidden bg-background">
-      <div
-        className={`
-        fixed inset-y-0 left-0 z-50 w-64 shrink-0 transform bg-card transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:relative lg:translate-x-0
-        ${sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:shadow-none'}
-      `}
-      >
-        <Sidebar
-          activeTab={activeTab}
-          onTabChange={(tab) => {
-            setActiveTab(tab);
-            setSidebarOpen(false);
-          }}
-        />
-      </div>
-
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-md animate-in-fade lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden
-        />
-      )}
-
-      <main className="relative flex min-h-screen min-w-0 flex-1 flex-col overflow-hidden">
-        <div className="flex flex-1 flex-col overflow-hidden">
-          {children(activeTab, setActiveTab, openSidebar)}
-        </div>
-      </main>
-    </div>
+    <SidebarProvider
+      defaultOpen
+      className="flex min-h-svh w-full flex-row"
+      style={{ '--sidebar-width': '16rem' } as React.CSSProperties}
+    >
+      <AppSidebar />
+      <SidebarInset className="flex min-h-svh min-w-0 flex-1 flex-col overflow-hidden">
+        {children(activeTab, setActiveTab)}
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 

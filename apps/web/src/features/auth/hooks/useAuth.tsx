@@ -9,6 +9,7 @@ interface AuthContextType {
   token: string | null;
   login: (accessToken: string, refreshToken?: string) => void;
   logout: () => void;
+  refreshUser: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -83,6 +84,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const response = await axios.get(`${API}/auth/profile`);
+      setUser(response.data);
+    } catch {
+      /* ignore */
+    }
+  };
+
   const login = (accessToken: string, refreshToken?: string) => {
     localStorage.setItem('token', accessToken);
     if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
@@ -107,7 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, refreshUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

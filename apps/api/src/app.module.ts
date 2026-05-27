@@ -9,12 +9,14 @@ import { TeamsModule } from './teams/teams.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { TemplatesModule } from './templates/templates.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MailModule,
     PrismaModule,
     AuthModule,
     SignaturesModule,

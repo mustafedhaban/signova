@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
+import { FRITT_BUILTIN_TEMPLATES } from './fritt-builtin';
 
 // Built-in templates seeded in memory (no DB row needed)
 export const BUILTIN_TEMPLATES = [
@@ -10,6 +11,7 @@ export const BUILTIN_TEMPLATES = [
   { id: 'creative',  name: 'Creative Colorful',     description: 'Vibrant gradient design',             category: 'creative',     tags: '["colorful","creative","ngo"]', isPublic: true, thumbnailUrl: null },
   { id: 'executive', name: 'Executive Formal',      description: 'Conservative gold-accented layout',   category: 'executive',    tags: '["formal","executive","ngo"]',  isPublic: true, thumbnailUrl: null },
   { id: 'tech',      name: 'Tech Startup',          description: 'Dark terminal-inspired design',       category: 'tech',         tags: '["tech","startup","modern"]',   isPublic: true, thumbnailUrl: null },
+  ...FRITT_BUILTIN_TEMPLATES,
 ];
 
 @Injectable()

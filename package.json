@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm --parallel --filter @signova/api --filter @signova/web dev",
+    "dev:api": "pnpm --filter @signova/api dev",
+    "dev:web": "pnpm --filter @signova/web dev",
+    "build": "pnpm --filter @signova/api build && pnpm --filter @signova/web build",
+    "lint": "pnpm --filter @signova/api lint && pnpm --filter @signova/web lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,css}\""
   },
   "keywords": [],
   "author": "",
@@ -16,5 +22,8 @@
       "onFail": "download"
     }
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "prettier": "^3.8.3"
+  }
 }

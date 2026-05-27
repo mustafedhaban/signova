@@ -33,3 +33,6 @@ apps/web/dist/
 
 # Cursor local state
 .cursor/
+
+# RepoPrompt oracle exports (ephemeral)
+prompt-exports/

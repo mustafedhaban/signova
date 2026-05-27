@@ -4,10 +4,14 @@ import { ITeam } from '@signova/types';
 
 const API_URL = 'http://localhost:3000/api/v1/teams';
 
+export interface TeamWithCount extends ITeam {
+  _count?: { signatures: number };
+}
+
 export const useTeams = () => {
   const queryClient = useQueryClient();
 
-  const teamsQuery = useQuery<ITeam[]>({
+  const teamsQuery = useQuery<TeamWithCount[]>({
     queryKey: ['teams'],
     queryFn: async () => {
       const response = await axios.get(API_URL);
@@ -25,12 +29,23 @@ export const useTeams = () => {
     },
   });
 
+  const deleteTeamMutation = useMutation({
+    mutationFn: async (teamId: string) => {
+      await axios.delete(`${API_URL}/${teamId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['signatures'] });
+    },
+  });
+
   const importCsvMutation = useMutation({
-    mutationFn: async ({ teamId, members }: { teamId: string, members: any[] }) => {
+    mutationFn: async ({ teamId, members }: { teamId: string; members: Record<string, string>[] }) => {
       const response = await axios.post(`${API_URL}/${teamId}/import`, { members });
       return response.data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
       queryClient.invalidateQueries({ queryKey: ['signatures'] });
     },
   });
@@ -39,6 +54,9 @@ export const useTeams = () => {
     teams: teamsQuery.data ?? [],
     isLoading: teamsQuery.isLoading,
     createTeam: createTeamMutation.mutateAsync,
+    deleteTeam: deleteTeamMutation.mutateAsync,
     importCsv: importCsvMutation.mutateAsync,
+    isCreating: createTeamMutation.isPending,
+    isDeleting: deleteTeamMutation.isPending,
   };
 };

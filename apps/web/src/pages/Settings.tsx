@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AppLayout from '@/components/AppLayout';
 import Navbar from '@/components/Navbar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageShell } from '@/components/layout/page-shell';
+import { SectionCard } from '@/components/layout/section-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import ChangePasswordForm from '@/features/auth/components/ChangePasswordForm';
 import axios from 'axios';
-import { CheckCircle2, Download, Trash2, Settings as SettingsIcon } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Download, Trash2, Settings as SettingsIcon } from 'lucide-react';
+import { toast, toastApiError } from '@/lib/toast';
 
 const API = 'http://localhost:3000/api/v1/users/me';
 
-const Settings: React.FC = () => {
-  const { user, logout } = useAuth();
+const Settings = () => {
+  const { user, logout, refreshUser } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl ?? '');
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -29,9 +33,16 @@ const Settings: React.FC = () => {
     try {
       await axios.patch(API, { name: name.trim(), avatarUrl: avatarUrl.trim() || undefined });
       setSaveSuccess(true);
+      toast.success('Profile updated');
       setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (e: any) {
-      setSaveError(e.response?.data?.message || 'Failed to save profile');
+    } catch (e: unknown) {
+      toastApiError(e, 'Failed to save profile');
+      setSaveError(
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { message?: string } } }).response?.data?.message ||
+              'Failed to save profile'
+          : 'Failed to save profile',
+      );
     } finally {
       setIsSaving(false);
     }
@@ -63,186 +74,164 @@ const Settings: React.FC = () => {
 
   return (
     <AppLayout defaultTab="settings">
-      {(_activeTab, _setActiveTab, openSidebar) => (
+      {() => (
         <>
-          <Navbar title="Settings" onMenuClick={openSidebar} />
-          <div className="flex-1 overflow-y-auto p-8 bg-muted/30">
-            <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <Navbar title="Settings" description="Profile, security, and account" />
+          <PageShell size="md">
+            <SectionCard
+              icon={SettingsIcon}
+              title="Profile"
+              description="Update your personal information and avatar"
+            >
+              <div className="space-y-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <Avatar className="size-20 rounded-lg">
+                    <AvatarImage src={avatarUrl} alt={name} />
+                    <AvatarFallback className="rounded-lg bg-primary/10 text-2xl font-semibold text-primary">
+                      {name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Field className="flex-1">
+                    <FieldLabel htmlFor="avatarUrl">Avatar URL</FieldLabel>
+                    <Input
+                      id="avatarUrl"
+                      value={avatarUrl}
+                      onChange={(e) => setAvatarUrl(e.target.value)}
+                      placeholder="https://example.com/avatar.png"
+                      className="h-10"
+                    />
+                  </Field>
+                </div>
 
-              {/* Profile */}
-              <Card>
-                <CardHeader className="pb-8 border-b border-border/50">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                      <SettingsIcon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">Profile Settings</CardTitle>
-                      <CardDescription>Update your personal information and avatar</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-8 pt-8">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                    <Avatar className="w-24 h-24 rounded-3xl border-4 border-background shadow-soft ring-1 ring-border/50 transition-transform hover:rotate-3">
-                      <AvatarImage src={avatarUrl} className="object-cover" />
-                      <AvatarFallback className="bg-primary/10 text-primary text-3xl font-bold">
-                        {name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 w-full space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Avatar URL</Label>
-                      <Input
-                        value={avatarUrl}
-                        onChange={(e) => setAvatarUrl(e.target.value)}
-                        placeholder="https://example.com/avatar.png"
-                        className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl transition-all h-12 font-medium"
-                      />
-                    </div>
-                  </div>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="name">Full name</FieldLabel>
+                    <Input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      className="h-10"
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input id="email" value={user?.email ?? ''} disabled className="h-10" />
+                  </Field>
+                </FieldGroup>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Full Name</Label>
-                      <Input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Your name"
-                        className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl transition-all h-12 font-bold"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1 opacity-60">Email Address</Label>
-                      <Input 
-                        value={user?.email ?? ''} 
-                        disabled 
-                        className="bg-muted/20 border-2 border-transparent rounded-xl h-12 font-bold opacity-60 cursor-not-allowed" 
-                      />
-                    </div>
-                  </div>
+                {saveError ? (
+                  <Alert variant="destructive">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle>Save failed</AlertTitle>
+                    <AlertDescription>{saveError}</AlertDescription>
+                  </Alert>
+                ) : null}
 
-                  {saveError && (
-                    <Alert variant="destructive" className="rounded-2xl border-2">
-                      <AlertDescription className="font-bold">{saveError}</AlertDescription>
-                    </Alert>
-                  )}
+                {saveSuccess ? (
+                  <Alert className="border-success/30 bg-success/10 text-success">
+                    <CheckCircle2 className="size-4" />
+                    <AlertDescription>Profile updated successfully.</AlertDescription>
+                  </Alert>
+                ) : null}
 
-                  {saveSuccess && (
-                    <Alert className="rounded-2xl border-2 border-success/30 bg-success/10 text-success">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      <AlertDescription className="font-bold">Profile updated successfully!</AlertDescription>
-                    </Alert>
-                  )}
-
-                  <Button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className={`w-full sm:w-auto h-12 px-10 rounded-2xl font-bold transition-all shadow-xl active:scale-95 ${
-                      saveSuccess 
-                        ? 'bg-success text-success-foreground hover:bg-success/90 shadow-success/20' 
-                        : 'shadow-primary/20'
-                    }`}
-                  >
-                    {isSaving ? 'Saving Changes...' : saveSuccess ? '✓ Saved' : 'Save Changes'}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Account info */}
-              <Card>
-                <CardHeader className="pb-8 border-b border-border/50">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                      <Download className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">Account Management</CardTitle>
-                      <CardDescription>Manage your data and account details</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6 pt-8">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-muted/30 rounded-2xl border border-border/50 transition-colors hover:bg-muted/50">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Provider</p>
-                      <p className="font-bold capitalize text-sm">{user?.provider ?? 'dev'}</p>
-                    </div>
-                    <div className="p-4 bg-muted/30 rounded-2xl border border-border/50 transition-colors hover:bg-muted/50">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Member Since</p>
-                      <p className="font-bold text-sm">
-                        {user?.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}
-                      </p>
-                    </div>
-                  </div>
-                  <Button variant="outline" onClick={handleExport} className="w-full h-12 rounded-2xl font-bold border-2 hover:bg-muted active:scale-[0.98]">
-                    <Download className="w-4 h-4 mr-2" /> Export Data (GDPR)
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Danger zone */}
-              <Card className="border-destructive/30 bg-destructive/[0.02]">
-                <CardHeader className="pb-6 border-b border-destructive/10">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-destructive/10 rounded-xl flex items-center justify-center">
-                      <Trash2 className="w-6 h-6 text-destructive" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl text-destructive">Danger Zone</CardTitle>
-                      <CardDescription>Permanently delete your account and all data</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 pt-6">
-                  {!showDeleteConfirm ? (
-                    <Button variant="destructive" onClick={() => setShowDeleteConfirm(true)} className="w-full sm:w-auto h-12 px-10 rounded-2xl font-bold shadow-lg shadow-destructive/20 active:scale-[0.98]">
-                      <Trash2 className="w-4 h-4 mr-2" /> Delete My Account
-                    </Button>
+                <Button onClick={handleSave} disabled={isSaving} className="h-10">
+                  {isSaving ? (
+                    <>
+                      <Spinner className="mr-2" />
+                      Saving…
+                    </>
                   ) : (
-                    <div className="space-y-6 p-6 border-2 border-destructive/20 rounded-3xl bg-card animate-in zoom-in-95 duration-300">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
-                          <Trash2 className="w-5 h-5 text-destructive" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-bold text-destructive">Wait! This is permanent.</p>
-                          <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                            Deleting your account will remove all signatures, organizations, and team data. This action cannot be reversed.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
-                          Confirm by typing: <span className="text-destructive select-all">{user?.email}</span>
-                        </Label>
-                        <Input
-                          value={deleteInput}
-                          onChange={(e) => setDeleteInput(e.target.value)}
-                          placeholder={user?.email}
-                          className="bg-muted/40 border-2 border-transparent focus:border-destructive/30 focus:bg-background rounded-xl h-11 font-medium"
-                        />
-                      </div>
-                      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Button
-                          variant="destructive"
-                          onClick={handleDelete}
-                          disabled={deleteInput !== user?.email}
-                          className="flex-1 h-12 rounded-2xl font-bold shadow-lg shadow-destructive/20 active:scale-[0.98]"
-                        >
-                          Permanently Delete Account
-                        </Button>
-                        <Button variant="outline" onClick={() => { setShowDeleteConfirm(false); setDeleteInput(''); }} className="flex-1 h-12 rounded-2xl font-bold border-2 active:scale-[0.98]">
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
+                    'Save changes'
                   )}
-                </CardContent>
-              </Card>
+                </Button>
+              </div>
+            </SectionCard>
 
-            </div>
-          </div>
+            <ChangePasswordForm hasPassword={!!user?.hasPassword} onSuccess={refreshUser} />
+
+            <SectionCard
+              icon={Download}
+              title="Account management"
+              description="Export your data and view account details"
+            >
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-xs text-muted-foreground">Provider</p>
+                    <p className="mt-1 font-medium capitalize">{user?.provider ?? 'dev'}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-xs text-muted-foreground">Member since</p>
+                    <p className="mt-1 font-medium">
+                      {user?.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })
+                        : '—'}
+                    </p>
+                  </div>
+                </div>
+                <Button variant="outline" onClick={handleExport} className="h-10 w-full sm:w-auto">
+                  <Download className="size-4" />
+                  Export data (GDPR)
+                </Button>
+              </div>
+            </SectionCard>
+
+            <SectionCard
+              icon={Trash2}
+              title="Danger zone"
+              description="Permanently delete your account and all data"
+              variant="destructive"
+            >
+              {!showDeleteConfirm ? (
+                <Button variant="destructive" onClick={() => setShowDeleteConfirm(true)}>
+                  <Trash2 className="size-4" />
+                  Delete my account
+                </Button>
+              ) : (
+                <div className="space-y-4 rounded-lg border border-destructive/20 bg-card p-4">
+                  <p className="text-sm text-muted-foreground">
+                    This removes all signatures, organizations, and team data. Type{' '}
+                    <span className="font-medium text-destructive">{user?.email}</span> to confirm.
+                  </p>
+                  <Field>
+                    <FieldLabel htmlFor="deleteConfirm">Confirm email</FieldLabel>
+                    <Input
+                      id="deleteConfirm"
+                      value={deleteInput}
+                      onChange={(e) => setDeleteInput(e.target.value)}
+                      placeholder={user?.email}
+                      className="h-10"
+                    />
+                  </Field>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={deleteInput !== user?.email}
+                      className="flex-1"
+                    >
+                      Permanently delete
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteInput('');
+                      }}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </SectionCard>
+          </PageShell>
         </>
       )}
     </AppLayout>

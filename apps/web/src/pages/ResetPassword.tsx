@@ -1,90 +1,143 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import { resetPassword } from '@/features/auth/lib/auth-api';
+import { AuthFormCard } from '@/features/auth/components/auth-form-card';
+import { AuthPageHeader } from '@/features/auth/components/auth-page-header';
 import AuthLayout from '@/components/AuthLayout';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { PasswordInput } from '@/components/ui/password-input';
+import { Spinner } from '@/components/ui/spinner';
+import { AlertCircle, ArrowRight, Lock } from 'lucide-react';
 
-const ResetPasswordPage: React.FC = () => {
+const schema = z
+  .object({
+    password: z.string().min(8, 'Password must be at least 8 characters.'),
+    confirmPassword: z.string().min(1, 'Please confirm your password.'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match.',
+    path: ['confirmPassword'],
+  });
+
+type FormValues = z.infer<typeof schema>;
+
+const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const { login } = useAuth();
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
   const token = searchParams.get('token') || '';
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { password: '', confirmPassword: '' },
+  });
+
   useEffect(() => {
-    if (!token) setError('Missing or invalid reset token.');
+    if (!token) setServerError('Missing or invalid reset token.');
   }, [token]);
 
-  const handleReset = async () => {
+  const onSubmit = async (values: FormValues) => {
     if (!token) return;
-    setError('');
-    setIsLoading(true);
+    setServerError('');
+
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        setError(data.message || 'Invalid or expired token.');
+      const result = await resetPassword(token, values.password);
+      if (!result.ok) {
+        const msg = result.data.message;
+        setServerError(
+          Array.isArray(msg) ? msg.join(', ') : (msg as string) || 'Invalid or expired token.',
+        );
         return;
       }
-      login(data.access_token, data.refresh_token);
+      login(result.data.access_token, result.data.refresh_token);
     } catch {
-      setError('Unable to connect. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setServerError('Unable to connect. Please try again.');
     }
   };
 
   return (
     <AuthLayout>
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-3xl mb-4 rotate-3 shadow-soft border-2 border-primary/5">
-            <ShieldCheck className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="text-3xl font-black tracking-tight text-primary">Finalize Reset</h1>
-          <p className="text-muted-foreground font-medium">You're one click away from your account</p>
-        </div>
-
-        <Card className="border-2 shadow-soft rounded-[2rem] overflow-hidden">
-          <CardHeader className="space-y-1 pb-6 border-b border-border/50 bg-muted/20">
-            <CardTitle className="text-2xl font-bold">Reset your session</CardTitle>
-            <CardDescription className="font-medium">Click below to sign in with your reset token</CardDescription>
-          </CardHeader>
-
-          <CardContent className="pt-8">
-            {error ? (
-              <div className="p-4 bg-destructive/10 border-2 border-destructive/20 rounded-xl text-sm font-bold text-destructive flex items-center space-x-3">
-                <AlertCircle className="w-5 h-5 shrink-0" />
-                <span>{error}</span>
-              </div>
-            ) : (
-              <Button
-                onClick={handleReset}
-                disabled={isLoading || !token}
-                className="w-full h-14 rounded-2xl font-bold text-lg shadow-xl shadow-primary/20 transition-all active:scale-95"
-              >
-                {isLoading ? (
-                  'Restoring Session...'
-                ) : (
-                  <span className="flex items-center">
-                    Sign In to Signova <ArrowRight className="w-5 h-5 ml-2" />
-                  </span>
-                )}
-              </Button>
-            )}
-          </CardContent>
-
-          <CardFooter className="justify-center border-t border-border/50 bg-muted/10 py-6">
-            <Link to="/login" className="text-sm font-bold text-primary hover:underline decoration-2 underline-offset-4">
+      <div className="space-y-6">
+        <AuthPageHeader tagline="Choose a new password for your account" />
+        <AuthFormCard
+          title="New password"
+          description="Enter and confirm your new password"
+          footer={
+            <Link to="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
               Back to sign in
             </Link>
-          </CardFooter>
-        </Card>
+          }
+        >
+          {!token ? (
+            <Alert variant="destructive">
+              <AlertCircle className="size-4" />
+              <AlertTitle>Invalid link</AlertTitle>
+              <AlertDescription>{serverError}</AlertDescription>
+            </Alert>
+          ) : (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+              <FieldGroup>
+                <Field data-invalid={!!errors.password}>
+                  <FieldLabel htmlFor="password">New password</FieldLabel>
+                  <PasswordInput
+                    id="password"
+                    leftIcon={<Lock />}
+                    autoComplete="new-password"
+                    className="h-10"
+                    aria-invalid={!!errors.password}
+                    {...register('password')}
+                  />
+                  <FieldError errors={errors.password ? [errors.password] : undefined} />
+                </Field>
+                <Field data-invalid={!!errors.confirmPassword}>
+                  <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+                  <PasswordInput
+                    id="confirmPassword"
+                    leftIcon={<Lock />}
+                    autoComplete="new-password"
+                    className="h-10"
+                    aria-invalid={!!errors.confirmPassword}
+                    {...register('confirmPassword')}
+                  />
+                  <FieldError errors={errors.confirmPassword ? [errors.confirmPassword] : undefined} />
+                </Field>
+              </FieldGroup>
+
+              {serverError ? (
+                <Alert variant="destructive">
+                  <AlertCircle className="size-4" />
+                  <AlertTitle>Could not reset password</AlertTitle>
+                  <AlertDescription>{serverError}</AlertDescription>
+                </Alert>
+              ) : null}
+
+              <Button type="submit" disabled={isSubmitting} className="h-10 w-full" size="lg">
+                {isSubmitting ? (
+                  <>
+                    <Spinner className="mr-2" />
+                    Updating…
+                  </>
+                ) : (
+                  <>
+                    Reset password
+                    <ArrowRight className="ml-1.5 size-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+          )}
+        </AuthFormCard>
+      </div>
     </AuthLayout>
   );
 };

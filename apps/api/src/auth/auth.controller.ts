@@ -4,6 +4,9 @@ import { AuthService } from './auth.service';
 import { DevLoginDto } from './dto/dev-login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -11,31 +14,19 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
-  // TODO: Re-enable Google OAuth
-  // @Get('google')
-  // @UseGuards(AuthGuard('google'))
-  // async googleAuth(@Req() req) {}
-  // TODO: Re-enable Google OAuth
-
-  // TODO: Re-enable Google OAuth
-  // @Get('google/callback')
-  // @UseGuards(AuthGuard('google'))
-  // async googleAuthRedirect(@Req() req, @Res() res: Response) {
-  //   const authData = await this.authService.validateOAuthUser(req.user);
-  //
-  //   const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
-  //   res.redirect(`${frontendUrl}/auth-callback?token=${authData.access_token}`);
-  // }
-  // TODO: Re-enable Google OAuth
-
   @Post('dev-login')
   async devLogin(@Body() body: DevLoginDto) {
     return this.authService.devLogin(body.email);
   }
 
+  @Post('login')
+  async login(@Body() body: LoginDto) {
+    return this.authService.login(body.email, body.password);
+  }
+
   @Post('register')
   async register(@Body() body: RegisterDto) {
-    return this.authService.register(body.email, body.name);
+    return this.authService.register(body.email, body.name, body.password);
   }
 
   @Post('forgot-password')
@@ -44,8 +35,18 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  async resetPassword(@Body() body: { token: string }) {
-    return this.authService.resetPassword(body.token);
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPassword(body.token, body.password);
+  }
+
+  @Post('change-password')
+  @UseGuards(AuthGuard('jwt'))
+  async changePassword(@Req() req, @Body() body: ChangePasswordDto) {
+    return this.authService.changePassword(
+      req.user.userId,
+      body.currentPassword,
+      body.newPassword,
+    );
   }
 
   @Post('refresh')
@@ -63,6 +64,6 @@ export class AuthController {
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
   getProfile(@Req() req) {
-    return req.user;
+    return this.authService.getProfile(req.user.userId);
   }
 }

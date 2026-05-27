@@ -4,6 +4,8 @@ import { AuthProvider } from '@/features/auth/hooks/useAuth';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ThemeProvider } from 'next-themes';
 import PageLoading from '@/components/PageLoading';
+import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 // Lazy load pages for performance
 const LoginPage = lazy(() => import('@/pages/Login'));
@@ -16,10 +18,13 @@ const Builder = lazy(() => import('@/pages/Builder'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const OrganizationSettings = lazy(() => import('@/pages/OrganizationSettings'));
 const SharedSignature = lazy(() => import('@/pages/SharedSignature'));
+const InstallationGuides = lazy(() => import('@/pages/InstallationGuides'));
+const InstallationGuideView = lazy(() => import('@/pages/InstallationGuideView'));
 
 function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <TooltipProvider>
       <AuthProvider>
         <div className="min-h-screen w-full bg-background font-sans antialiased text-foreground">
         <Suspense fallback={<PageLoading />}>
@@ -36,12 +41,16 @@ function App() {
               <Route path="/builder/:id" element={<Builder />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/organizations" element={<OrganizationSettings />} />
+              <Route path="/guides" element={<InstallationGuides />} />
+              <Route path="/guides/:guideId" element={<InstallationGuideView />} />
             </Route>
           </Routes>
         </Suspense>
       </div>
+      <Toaster position="top-center" richColors closeButton />
     </AuthProvider>
-  </ThemeProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   );
 }
 

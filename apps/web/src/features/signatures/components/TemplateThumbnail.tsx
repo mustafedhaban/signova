@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ITemplate } from '../templates';
+import { ITemplate } from '../templates/types';
 import { ISignature } from '@signova/types';
 
 const PREVIEW_DATA: Partial<ISignature> = {
@@ -8,7 +8,14 @@ const PREVIEW_DATA: Partial<ISignature> = {
   company: 'Acme NGO',
   email: 'jane@acmengo.org',
   phone: '+1 555 000 1234',
-  socialLinks: [],
+  mobile: '+1 555 000 5678',
+  website: 'https://acmengo.org',
+  address: '32 Black Street, Winter Hour, United Kingdom',
+  primaryColor: '#E54B4B',
+  socialLinks: [
+    { platform: 'facebook', url: 'https://facebook.com' },
+    { platform: 'twitter', url: 'https://twitter.com' },
+  ],
 };
 
 interface TemplateThumbnailProps {

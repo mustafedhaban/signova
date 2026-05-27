@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import AppLayout from '@/components/AppLayout';
 import Navbar from '@/components/Navbar';
+import { PageShell } from '@/components/layout/page-shell';
+import { EmptyState } from '@/components/layout/empty-state';
+import { SectionCard } from '@/components/layout/section-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Select, 
   SelectContent, 
@@ -34,7 +39,7 @@ import {
 } from "@/components/ui/dialog";
 import { useOrganizations, Organization } from '@/features/organizations/hooks/useOrganizations';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { Plus, Trash2, UserPlus, Building2, Users } from 'lucide-react';
+import { Plus, Trash2, UserPlus, Building2 } from 'lucide-react';
 import BrandingPanel from '@/features/organizations/components/BrandingPanel';
 
 const roleBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
@@ -91,86 +96,96 @@ const OrganizationSettings: React.FC = () => {
 
   return (
     <AppLayout defaultTab="settings">
-      {(_activeTab, _setActiveTab, openSidebar) => (
+      {() => (
         <div className="flex flex-col h-full overflow-hidden">
-          <Navbar title="Organization Settings" onMenuClick={openSidebar} />
-          <div className="flex-1 overflow-y-auto p-8 bg-muted/30">
-            <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-
-              {/* Org selector + create */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex flex-wrap items-center gap-2 p-1 bg-muted rounded-2xl border border-border/50">
-                  {organizations.map((org, index) => (
-                    <button
-                      key={org.id || `org-${index}`}
-                      onClick={() => setSelectedOrgId(org.id)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
-                        (selectedOrg?.id === org.id) 
-                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
-                          : 'text-muted-foreground hover:bg-background hover:text-primary'
-                      }`}
-                    >
-                      {org.name}
-                    </button>
-                  ))}
-                </div>
+          <Navbar
+            title="Organizations"
+            description="Workspaces, branding, and team members"
+          />
+          <PageShell size="lg">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                {organizations.length > 0 ? (
+                  <Tabs
+                    value={selectedOrg?.id ?? organizations[0]?.id}
+                    onValueChange={setSelectedOrgId}
+                  >
+                    <TabsList className="h-auto flex-wrap justify-start">
+                      {organizations.map((org, index) => (
+                        <TabsTrigger key={org.id || `org-${index}`} value={org.id} className="text-sm">
+                          {org.name}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
+                ) : (
+                  <div />
+                )}
 
                 <Dialog open={showCreate} onOpenChange={setShowCreate}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="rounded-xl font-bold border-2 h-10 px-4 active:scale-95">
-                      <Plus className="w-4 h-4 mr-2" /> New Organization
+                    <Button variant="outline" size="sm">
+                      <Plus className="size-4" />
+                      New organization
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px] rounded-3xl">
+                  <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                      <DialogTitle className="text-xl font-bold">Create Organization</DialogTitle>
+                      <DialogTitle>Create organization</DialogTitle>
                       <DialogDescription>
                         Launch a new workspace for your team signatures.
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-6 pt-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold text-muted-foreground ml-1 uppercase tracking-widest">Name</Label>
+                    <div className="space-y-4 pt-2">
+                      <FieldGroup>
+                        <Field>
+                          <FieldLabel htmlFor="org-name">Name</FieldLabel>
                           <Input
+                            id="org-name"
                             placeholder="e.g. Acme NGO"
                             value={createForm.name}
                             onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                            className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium"
+                            className="h-10"
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold text-muted-foreground ml-1 uppercase tracking-widest">Slug</Label>
+                        </Field>
+                        <Field>
+                          <FieldLabel htmlFor="org-slug">Slug</FieldLabel>
                           <Input
+                            id="org-slug"
                             placeholder="acme-ngo"
                             value={createForm.slug}
-                            onChange={(e) => setCreateForm({ ...createForm, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
-                            className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium"
+                            onChange={(e) =>
+                              setCreateForm({
+                                ...createForm,
+                                slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+                              })
+                            }
+                            className="h-10"
                           />
-                        </div>
-                      </div>
-                      {createError && <p className="text-xs font-bold text-destructive px-2">{createError}</p>}
-                      <div className="flex justify-end gap-3 pt-2">
-                        <Button variant="outline" onClick={() => setShowCreate(false)} className="rounded-xl px-6 font-bold border-2">Cancel</Button>
-                        <Button variant="default" onClick={handleCreate} className="rounded-xl px-6 font-bold shadow-lg shadow-primary/20 active:scale-95">Create Workspace</Button>
+                        </Field>
+                      </FieldGroup>
+                      {createError ? (
+                        <Alert variant="destructive">
+                          <AlertDescription>{createError}</AlertDescription>
+                        </Alert>
+                      ) : null}
+                      <div className="flex justify-end gap-2 pt-2">
+                        <Button variant="outline" onClick={() => setShowCreate(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={handleCreate}>Create workspace</Button>
                       </div>
                     </div>
                   </DialogContent>
                 </Dialog>
               </div>
 
-              {/* No orgs empty state */}
               {!isLoading && organizations.length === 0 && !showCreate && (
-                <div className="flex flex-col items-center justify-center p-20 text-center bg-card border-2 border-dashed rounded-[2.5rem] shadow-soft">
-                  <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 rotate-3">
-                    <Building2 className="w-10 h-10 text-primary" />
-                  </div>
-                  <h3 className="font-bold text-2xl mb-2 text-primary">No organizations yet</h3>
-                  <p className="text-muted-foreground text-sm mb-10 max-w-xs leading-relaxed">Create a workspace to manage team signatures and unified branding.</p>
-                  <Button variant="default" size="lg" onClick={() => setShowCreate(true)} className="rounded-2xl px-10 font-bold shadow-xl shadow-primary/20 h-14 text-base active:scale-95">
-                    <Plus className="w-5 h-5 mr-3" /> Create First Organization
-                  </Button>
-                </div>
+                <EmptyState
+                  icon={Building2}
+                  title="No organizations yet"
+                  description="Create a workspace to manage team signatures and unified branding."
+                  action={{ label: 'Create organization', onClick: () => setShowCreate(true) }}
+                />
               )}
 
               {/* Selected org details */}
@@ -183,19 +198,13 @@ const OrganizationSettings: React.FC = () => {
                     onSave={(data) => updateBranding(data as any)}
                   />
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Members list */}
-                    <Card className="h-full">
-                      <CardHeader className="border-b border-border/50 pb-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <CardTitle className="text-lg">Team Members</CardTitle>
-                            <CardDescription>{selectedOrg._count?.members ?? selectedOrg.members.length} member(s) active</CardDescription>
-                          </div>
-                          <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center">
-                            <Users className="w-5 h-5 text-primary" />
-                          </div>
-                        </div>
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Team members</CardTitle>
+                        <CardDescription>
+                          {selectedOrg._count?.members ?? selectedOrg.members.length} active member(s)
+                        </CardDescription>
                       </CardHeader>
                       <CardContent className="pt-6">
                         <div className="space-y-4">
@@ -230,101 +239,94 @@ const OrganizationSettings: React.FC = () => {
 
                     <div className="space-y-8">
                       {/* Invite member */}
-                      {canManage && (
-                        <Card>
-                          <CardHeader className="border-b border-border/50 pb-6">
-                            <CardTitle className="text-lg flex items-center">
-                              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
-                                <UserPlus className="w-4 h-4 text-primary" />
-                              </div>
-                              Invite Colleague
-                            </CardTitle>
-                            <CardDescription>Add new members to your workspace</CardDescription>
-                          </CardHeader>
-                          <CardContent className="space-y-6 pt-6">
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <Label className="text-xs font-bold text-muted-foreground ml-1 uppercase tracking-widest">Email Address</Label>
-                                <Input
-                                  type="email"
-                                  placeholder="colleague@example.com"
-                                  value={inviteForm.email}
-                                  onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
-                                  className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label className="text-xs font-bold text-muted-foreground ml-1 uppercase tracking-widest">Workspace Role</Label>
-                                <Select
-                                  value={inviteForm.role}
-                                  onValueChange={(value) => setInviteForm({ ...inviteForm, role: value ?? 'member' })}
-                                >
-                                  <SelectTrigger className="bg-muted/40 border-2 border-transparent focus:border-primary/20 focus:bg-background rounded-xl h-11 font-medium transition-all">
-                                    <SelectValue placeholder="Select role" />
-                                  </SelectTrigger>
-                                  <SelectContent className="rounded-xl border-2">
-                                    <SelectItem value="member">Member</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                    {myRole === 'owner' && <SelectItem value="owner">Owner</SelectItem>}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <Button variant="default" onClick={handleInvite} className="w-full h-11 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-95">Send Invitation</Button>
-                            </div>
-                            {inviteError && <p className="text-[10px] font-bold text-destructive px-1">{inviteError}</p>}
-                          </CardContent>
-                        </Card>
-                      )}
+                      {canManage ? (
+                        <SectionCard
+                          icon={UserPlus}
+                          title="Invite colleague"
+                          description="Add new members to your workspace"
+                        >
+                          <FieldGroup>
+                            <Field>
+                              <FieldLabel htmlFor="invite-email">Email</FieldLabel>
+                              <Input
+                                id="invite-email"
+                                type="email"
+                                placeholder="colleague@example.com"
+                                value={inviteForm.email}
+                                onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
+                                className="h-10"
+                              />
+                            </Field>
+                            <Field>
+                              <FieldLabel>Role</FieldLabel>
+                              <Select
+                                value={inviteForm.role}
+                                onValueChange={(value) => setInviteForm({ ...inviteForm, role: value ?? 'member' })}
+                              >
+                                <SelectTrigger className="h-10">
+                                  <SelectValue placeholder="Select role" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="member">Member</SelectItem>
+                                  <SelectItem value="admin">Admin</SelectItem>
+                                  {myRole === 'owner' ? <SelectItem value="owner">Owner</SelectItem> : null}
+                                </SelectContent>
+                              </Select>
+                            </Field>
+                          </FieldGroup>
+                          {inviteError ? (
+                            <Alert variant="destructive" className="mt-4">
+                              <AlertDescription>{inviteError}</AlertDescription>
+                            </Alert>
+                          ) : null}
+                          <Button onClick={handleInvite} className="mt-4 w-full">
+                            Send invitation
+                          </Button>
+                        </SectionCard>
+                      ) : null}
 
-                      {/* Danger zone */}
-                      {myRole === 'owner' && (
-                        <Card className="border-destructive/30 bg-destructive/[0.02]">
-                          <CardHeader>
-                            <CardTitle className="text-lg text-destructive">Danger Zone</CardTitle>
-                            <CardDescription>Permanently remove this organization</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  className="rounded-xl font-bold px-6 h-10 shadow-lg shadow-destructive/20 active:scale-95"
+                      {myRole === 'owner' ? (
+                        <SectionCard
+                          icon={Trash2}
+                          title="Danger zone"
+                          description="Permanently remove this organization"
+                          variant="destructive"
+                        >
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive" size="sm">
+                                Delete workspace
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete organization?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This permanently deletes <strong>{selectedOrg.name}</strong> and all
+                                  associated data. This cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => {
+                                    deleteOrg(selectedOrg.id);
+                                    setSelectedOrgId(null);
+                                  }}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
-                                  Delete Workspace
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="rounded-3xl border-2">
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-xl font-bold">Are you absolutely sure?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete the organization
-                                    <strong> {selectedOrg.name}</strong> and remove all associated data.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel className="rounded-xl font-bold border-2">Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => {
-                                      deleteOrg(selectedOrg.id);
-                                      setSelectedOrgId(null);
-                                    }}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-bold shadow-lg shadow-destructive/20"
-                                  >
-                                    Delete Organization
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </CardContent>
-                        </Card>
-                      )}
+                                  Delete organization
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </SectionCard>
+                      ) : null}
                     </div>
                   </div>
                 </div>
               )}
-            </div>
-          </div>
+          </PageShell>
         </div>
       )}
     </AppLayout>

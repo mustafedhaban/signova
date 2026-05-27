@@ -7,10 +7,14 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class OrganizationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
   // ─── Create org (creator becomes owner) ─────────────────────────────────────
   async create(userId: string, dto: CreateOrganizationDto) {
@@ -79,10 +83,27 @@ export class OrganizationsService {
     });
     if (existing) throw new ConflictException('User is already a member of this organization');
 
-    return this.prisma.organizationMember.create({
+    const member = await this.prisma.organizationMember.create({
       data: { userId: invitee.id, organizationId: orgId, role },
       include: { user: { select: { id: true, name: true, email: true } } },
     });
+
+    const [org, inviter] = await Promise.all([
+      this.prisma.organization.findUnique({ where: { id: orgId }, select: { name: true } }),
+      this.prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+    ]);
+
+    if (org && inviter) {
+      void this.mailService.sendOrgInvite(
+        invitee.email,
+        invitee.name,
+        org.name,
+        inviter.name,
+        role,
+      );
+    }
+
+    return member;
   }
 
   // ─── Remove member ───────────────────────────────────────────────────────────

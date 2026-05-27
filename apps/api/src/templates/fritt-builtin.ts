@@ -1,0 +1,23 @@
+/** Metadata mirror of apps/web fritt catalog (no React components on API) */
+export const FRITT_BUILTIN_TEMPLATES = [
+  { id: 'fritt-photo-01', name: 'Classic Red Block', description: 'Logo left, name beside red divider', category: 'with-photo', tags: '["corporate","logo","red"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-photo-02', name: 'Split Contact Grid', description: 'Two-column phone and social', category: 'with-photo', tags: '["corporate","grid"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-photo-03', name: 'Compact Grid', description: 'Tighter logo layout', category: 'with-photo', tags: '["corporate","compact"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-photo-04', name: 'Inline Title Bar', description: 'Name and title on one row', category: 'with-photo', tags: '["corporate","inline"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-photo-05', name: 'Vertical Social', description: 'Stacked address and vertical social', category: 'with-photo', tags: '["corporate","social"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-photo-06', name: 'Title Badge', description: 'Red title badge on white', category: 'with-photo', tags: '["corporate","badge"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-photo-07', name: 'Stacked Classic', description: 'Single-column stacked contact', category: 'with-photo', tags: '["corporate","stacked"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-box-01', name: 'Grey Panel Solid', description: 'Solid grey contact panel', category: 'boxed', tags: '["corporate","panel"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-box-02', name: 'Grey Panel Split', description: 'Split contact in grey fill', category: 'boxed', tags: '["corporate","panel"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-box-03', name: 'Grey Panel Border', description: 'Bordered grey box', category: 'boxed', tags: '["corporate","border"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-box-04', name: 'Bordered Compact', description: 'Bordered panel compact', category: 'boxed', tags: '["corporate","border"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-box-05', name: 'Header + Footer Bar', description: 'Full-width address bar', category: 'boxed', tags: '["corporate","footer"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-box-06', name: 'Header + Footer Outline', description: 'Outlined address strip', category: 'boxed', tags: '["corporate","footer"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-min-01', name: 'Divider Columns', description: 'Name left, address right', category: 'minimal', tags: '["minimal","clean"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-min-02', name: 'Contact Columns', description: 'Phones right, social below', category: 'minimal', tags: '["minimal","columns"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-min-03', name: 'Horizontal Rule', description: 'Divider line footer', category: 'minimal', tags: '["minimal","rule"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-min-04', name: 'Simple Stack', description: 'Typography-only stack', category: 'minimal', tags: '["minimal","simple"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-center-01', name: 'Centered Classic', description: 'Centered name and contact', category: 'centered', tags: '["centered","formal"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-center-02', name: 'Centered Split', description: 'Centered with bottom social', category: 'centered', tags: '["centered","social"]', isPublic: true, thumbnailUrl: null },
+  { id: 'fritt-center-03', name: 'Centered Full', description: 'Fully centered lines', category: 'centered', tags: '["centered","symmetric"]', isPublic: true, thumbnailUrl: null },
+] as const;

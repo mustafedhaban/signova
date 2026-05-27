@@ -16,6 +16,7 @@ model User {
   name             String
   avatarUrl        String?
   provider         String               // "dev", "google", or "microsoft"
+  passwordHash     String?
   resetToken       String?
   resetTokenExpiry DateTime?
   refreshToken     String?

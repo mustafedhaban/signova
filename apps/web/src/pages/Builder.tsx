@@ -7,25 +7,25 @@ import axios from 'axios';
 import { 
   ArrowLeft, 
   Save, 
-  Download, 
-  Copy, 
   CheckCircle2, 
   Palette, 
   Layout, 
   User, 
   Mail, 
   Building2,
-  Loader2
 } from 'lucide-react';
 import { useSignatures } from '@/features/signatures/hooks/useSignatures';
 import { useOrganizations } from '@/features/organizations/hooks/useOrganizations';
-import { templates, getTemplateById, ITemplate } from '@/features/signatures/templates';
+import { templates, getTemplateById, getCategoryLabel, ITemplate } from '@/features/signatures/templates';
 import TemplateThumbnail from '@/features/signatures/components/TemplateThumbnail';
 import SocialLinksEditor from '@/features/signatures/components/SocialLinksEditor';
 import { exportSignatureToHtml, downloadSignatureAsHtml } from '@/features/signatures/utils/export';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Select, 
@@ -36,9 +36,10 @@ import {
 } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { toSignatureApiPayload } from '@/features/signatures/utils/api-payload';
+import { setLastSignatureHtml } from '@/features/signatures/utils/signature-clipboard';
+import InstallationGuidesDialog from '@/features/guides/components/InstallationGuidesDialog';
 
 // Derive all unique categories from the templates list
 const ALL_CATEGORIES = ['all', ...Array.from(new Set(templates.map((t) => t.category)))];
@@ -51,14 +52,10 @@ interface TemplatePickerProps {
 
 const TemplatePicker: React.FC<TemplatePickerProps> = ({ templates, selectedId, onSelect }) => {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [activeTag, setActiveTag] = useState<string | null>(null);
-
-  const allTags = Array.from(new Set(templates.flatMap((t) => t.tags)));
 
   const filtered = templates.filter((t) => {
     const categoryMatch = activeCategory === 'all' || t.category === activeCategory;
-    const tagMatch = !activeTag || t.tags.includes(activeTag);
-    return categoryMatch && tagMatch;
+    return categoryMatch;
   });
 
   return (
@@ -68,27 +65,13 @@ const TemplatePicker: React.FC<TemplatePickerProps> = ({ templates, selectedId, 
         {ALL_CATEGORIES.map((cat) => (
           <Button
             key={cat}
-            variant={activeCategory === cat && !activeTag ? 'default' : 'secondary'}
+            type="button"
+            variant={activeCategory === cat ? 'default' : 'outline'}
             size="sm"
-            onClick={() => { setActiveCategory(cat); setActiveTag(null); }}
-            className="rounded-xl text-[10px] font-bold uppercase tracking-widest h-8 px-4"
+            onClick={() => setActiveCategory(cat)}
+            className="h-8 text-xs"
           >
-            {cat}
-          </Button>
-        ))}
-      </div>
-
-      {/* Tag filter */}
-      <div className="flex flex-wrap gap-2">
-        {allTags.map((tag) => (
-          <Button
-            key={tag}
-            variant={activeTag === tag ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-            className="rounded-xl text-[10px] font-bold uppercase tracking-widest h-8 px-4"
-          >
-            #{tag}
+            {cat === 'all' ? 'All' : getCategoryLabel(cat)}
           </Button>
         ))}
       </div>
@@ -146,12 +129,8 @@ const Builder: React.FC = () => {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('info');
+  const [installGuideOpen, setInstallGuideOpen] = useState(false);
 
-  const handleCopy = async () => {
-    const html = exportSignatureToHtml(watchedData as any);
-    const blob = new Blob([html], { type: 'text/html' });
-    await navigator.clipboard.write([new ClipboardItem({ 'text/html': blob })]);
-  };
 
   const { register, control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -266,8 +245,14 @@ const Builder: React.FC = () => {
     setSaveError(null);
     const payload = toSignatureApiPayload(data as Record<string, unknown>);
     try {
+      const signatureHtml = exportSignatureToHtml(
+        data as Parameters<typeof exportSignatureToHtml>[0],
+      );
+      setLastSignatureHtml(signatureHtml);
+
       if (id === 'new') {
-        await createSignature(payload as Partial<typeof data>);
+        const created = await createSignature(payload as Partial<typeof data>);
+        navigate(`/builder/${created.id}`, { replace: true });
       } else {
         await axios.patch(
           `http://localhost:3000/api/v1/signatures/${id}`,
@@ -276,7 +261,7 @@ const Builder: React.FC = () => {
       }
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-      navigate('/');
+      setInstallGuideOpen(true);
     } catch (error) {
       console.error('Error saving signature:', error);
       const message = axios.isAxiosError(error)
@@ -294,63 +279,49 @@ const Builder: React.FC = () => {
     }
   };
 
+  const handleDownloadHtml = () => {
+    downloadSignatureAsHtml(
+      watchedData as Parameters<typeof downloadSignatureAsHtml>[0],
+      `${watchedData.name || 'signature'}.html`,
+    );
+  };
+
   return (
+    <>
+      <InstallationGuidesDialog
+        open={installGuideOpen}
+        onOpenChange={setInstallGuideOpen}
+        onDownloadHtml={handleDownloadHtml}
+      />
     <div className="flex flex-col h-screen bg-background overflow-hidden">
       {/* Header */}
-      <header className="flex justify-between items-center px-8 py-4 border-b bg-card/80 backdrop-blur-md sticky top-0 z-50 h-20 shrink-0">
-        <div className="flex items-center space-x-6">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="rounded-xl h-11 w-11 hover:bg-muted active:scale-95 border  hover:border-border transition-all">
-            <ArrowLeft className="w-5 h-5" />
+      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-md sm:px-6">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="icon" onClick={() => navigate('/')} aria-label="Back to dashboard">
+            <ArrowLeft className="size-4" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-primary">Signature Builder</h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mt-0.5">
-              {id === 'new' ? 'Creating New' : 'Editing Signature'}
+            <h1 className="text-lg font-semibold tracking-tight">Signature builder</h1>
+            <p className="text-xs text-muted-foreground">
+              {id === 'new' ? 'Create a new signature' : 'Edit signature'}
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-3">
-          {saveSuccess && (
-            <div className="flex items-center px-3 py-1.5 bg-success/10 text-success rounded-lg text-xs font-bold animate-in fade-in slide-in-from-right-4 border border-success/20">
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              <span>Saved!</span>
-            </div>
-          )}
-          {saveError && (
-            <div className="max-w-xs px-3 py-1.5 bg-destructive/10 text-destructive rounded-lg text-xs font-bold border border-destructive/20">
-              {saveError}
-            </div>
-          )}
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" onClick={handleCopy} className="rounded-xl h-11 w-11 font-bold active:scale-[0.98] border-2">
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Copy HTML to Clipboard</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" onClick={() => downloadSignatureAsHtml(watchedData as any, `${watchedData.name || 'signature'}.html`)} className="rounded-xl h-11 w-11 font-bold active:scale-[0.98] border-2">
-                  <Download className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Download as .html file</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <Button
-            onClick={handleSubmit(onSubmit)}
-            disabled={isSaving}
-            className="flex items-center px-6 h-11 space-x-2 text-white bg-primary rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all font-bold text-sm shadow-lg shadow-primary/20 active:scale-[0.98]"
-          >
-            <Save className="w-4 h-4" />
-            <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+        <div className="flex items-center gap-2">
+          {saveSuccess ? (
+            <Badge variant="outline" className="gap-1 border-success/30 bg-success/10 text-success">
+              <CheckCircle2 className="size-3.5" />
+              Saved
+            </Badge>
+          ) : null}
+          {saveError ? (
+            <Alert variant="destructive" className="max-w-xs py-2">
+              <AlertDescription className="text-xs">{saveError}</AlertDescription>
+            </Alert>
+          ) : null}
+          <Button onClick={handleSubmit(onSubmit)} disabled={isSaving} className="h-9 gap-2">
+            {isSaving ? <Spinner /> : <Save className="size-4" />}
+            {isSaving ? 'Saving…' : 'Save changes'}
           </Button>
         </div>
       </header>
@@ -358,37 +329,19 @@ const Builder: React.FC = () => {
       <div className="flex flex-1 flex-col lg:flex-row overflow-hidden h-full">
         {/* Sidebar - Form */}
         <aside className="relative z-20 flex h-auto min-h-[min(50vh,480px)] w-full shrink-0 flex-col overflow-hidden border-r bg-card shadow-xl lg:h-full lg:min-h-0 lg:w-[420px]">
-          <div className="p-6 border-b flex items-center justify-between bg-card/80 backdrop-blur-md sticky top-0 z-30">
-            <div>
-              <h2 className="text-xl font-bold tracking-tight">Editor</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Signature Builder</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={() => navigate('/')} className="rounded-xl h-9 border-2 font-bold px-4 active:scale-95">Cancel</Button>
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={handleSubmit(onSubmit)} 
-                disabled={isSaving}
-                className="rounded-xl h-9 bg-primary shadow-lg shadow-primary/20 font-bold px-6 active:scale-95 transition-all"
-              >
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : saveSuccess ? <CheckCircle2 className="w-4 h-4" /> : 'Save'}
-              </Button>
-            </div>
-          </div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
             <div className="px-6 py-4 bg-muted/20 border-b">
-              <TabsList className="w-full h-12 p-1 bg-muted rounded-xl border border-border/50">
-                <TabsTrigger value="info" className="flex-1 rounded-lg text-[10px] font-bold uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                  <User className="w-3.5 h-3.5 mr-2" />
+              <TabsList className="w-full">
+                <TabsTrigger value="info" className="flex-1 gap-2">
+                  <User className="size-3.5" />
                   Info
                 </TabsTrigger>
-                <TabsTrigger value="template" className="flex-1 rounded-lg text-[10px] font-bold uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                  <Layout className="w-3.5 h-3.5 mr-2" />
+                <TabsTrigger value="template" className="flex-1 gap-2">
+                  <Layout className="size-3.5" />
                   Template
                 </TabsTrigger>
-                <TabsTrigger value="design" className="flex-1 rounded-lg text-[10px] font-bold uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                  <Palette className="w-3.5 h-3.5 mr-2" />
+                <TabsTrigger value="design" className="flex-1 gap-2">
+                  <Palette className="size-3.5" />
                   Design
                 </TabsTrigger>
               </TabsList>
@@ -627,32 +580,10 @@ const Builder: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4 relative z-10 animate-in-up delay-100">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={handleCopy} className="rounded-2xl h-14 w-14 font-bold active:scale-95 border-2 bg-card shadow-xl hover:bg-muted hover:border-primary/20 transition-all">
-                    <Copy className="w-5 h-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="rounded-xl border-2 px-4 py-2 font-bold text-xs uppercase tracking-widest">Copy HTML</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={() => downloadSignatureAsHtml(watchedData as any, `${watchedData.name || 'signature'}.html`)} className="rounded-2xl h-14 w-14 font-bold active:scale-95 border-2 bg-card shadow-xl hover:bg-muted hover:border-primary/20 transition-all">
-                    <Download className="w-5 h-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="rounded-xl border-2 px-4 py-2 font-bold text-xs uppercase tracking-widest">Download .html</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
         </main>
       </div>
     </div>
+    </>
   );
 };
 
