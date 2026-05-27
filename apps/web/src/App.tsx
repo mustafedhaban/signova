@@ -6,6 +6,7 @@ import { ThemeProvider } from 'next-themes';
 import PageLoading from '@/components/PageLoading';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { AgentationDev } from '@/components/AgentationDev';
 
 // Lazy load pages for performance
 const LoginPage = lazy(() => import('@/pages/Login'));
@@ -48,6 +49,7 @@ function App() {
         </Suspense>
       </div>
       <Toaster position="top-center" richColors closeButton />
+      <AgentationDev />
     </AuthProvider>
       </TooltipProvider>
     </ThemeProvider>

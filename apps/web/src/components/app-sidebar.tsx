@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { Building2, Mail, Plus, Settings, ShieldCheck, Users } from 'lucide-react';
+import { Building2, Mail, Settings, ShieldCheck, Users } from 'lucide-react';
 import { NavUser } from '@/components/nav-user';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   Sidebar,
   SidebarContent,
@@ -13,14 +11,12 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useSignatures } from '@/features/signatures/hooks/useSignatures';
 
 type NavItem = {
   id: string;
@@ -48,30 +44,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { signatures, isLoading: signaturesLoading } = useSignatures();
   const { isMobile, setOpenMobile } = useSidebar();
-  const [search, setSearch] = React.useState('');
 
   const closeMobileSidebar = () => {
     if (isMobile) setOpenMobile(false);
   };
 
   const tab = searchParams.get('tab');
-  const selectedId = searchParams.get('signature');
   const activeNav = resolveActiveNav(location.pathname, tab);
-  const showSignatureList = activeNav.id === 'signatures' && location.pathname === '/';
-
-  const filteredSignatures = signatures.filter((s) =>
-    (s.name ?? '').toLowerCase().includes(search.toLowerCase()),
-  );
 
   const selectNav = (item: NavItem) => {
     if (item.tab) {
       const next = new URLSearchParams();
       next.set('tab', item.tab);
-      if (item.tab === 'signatures' && signatures[0]) {
-        next.set('signature', signatures[0].id);
-      }
       setSearchParams(next);
       if (location.pathname !== '/') navigate('/');
       closeMobileSidebar();
@@ -79,12 +64,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       navigate(item.path);
       closeMobileSidebar();
     }
-  };
-
-  const selectSignature = (id: string) => {
-    setSearchParams({ tab: 'signatures', signature: id });
-    if (location.pathname !== '/') navigate('/');
-    closeMobileSidebar();
   };
 
   return (
@@ -126,56 +105,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-
-          {showSignatureList ? (
-            <>
-              <Separator className="mx-2" />
-              <SidebarGroup>
-                <div className="flex items-center justify-between gap-2 px-2">
-                  <SidebarGroupLabel className="px-0">Your signatures</SidebarGroupLabel>
-                  <Button
-                    variant="outline"
-                    size="icon-sm"
-                    className="size-7 shrink-0 group-data-[collapsible=icon]:hidden"
-                    onClick={() => navigate('/builder/new')}
-                    aria-label="New signature"
-                  >
-                    <Plus className="size-4" />
-                  </Button>
-                </div>
-                <div className="px-2 pb-2 group-data-[collapsible=icon]:hidden">
-                  <SidebarInput
-                    placeholder="Search signatures…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
-                <SidebarGroupContent>
-                  {signaturesLoading ? (
-                    <p className="px-2 py-2 text-xs text-muted-foreground">Loading…</p>
-                  ) : filteredSignatures.length === 0 ? (
-                    <p className="px-2 py-2 text-xs text-muted-foreground">
-                      {search ? 'No matches.' : 'No signatures yet.'}
-                    </p>
-                  ) : (
-                    <SidebarMenu>
-                      {filteredSignatures.map((sig) => (
-                        <SidebarMenuItem key={sig.id}>
-                          <SidebarMenuButton
-                            isActive={selectedId === sig.id}
-                            onClick={() => selectSignature(sig.id)}
-                            tooltip={`${sig.name || 'Untitled'} · ${sig.email}`}
-                          >
-                            <span className="truncate">{sig.name || 'Untitled'}</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  )}
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </>
-          ) : null}
         </ScrollArea>
       </SidebarContent>
 

@@ -10,7 +10,9 @@
     "build": "pnpm --filter @signova/api build && pnpm --filter @signova/web build",
     "lint": "pnpm --filter @signova/api lint && pnpm --filter @signova/web lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,css}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,css}\"",
+    "agentation": "agentation-mcp server",
+    "agentation:doctor": "agentation-mcp doctor"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +26,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "agentation-mcp": "^1.2.0",
     "prettier": "^3.8.3"
   }
 }

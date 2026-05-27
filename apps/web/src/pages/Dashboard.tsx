@@ -7,7 +7,6 @@ import DeleteSignatureDialog from '@/components/DeleteSignatureDialog';
 import { EmptyState } from '@/components/layout/empty-state';
 import { useSignatures } from '@/features/signatures/hooks/useSignatures';
 import { SignaturePreviewPane } from '@/features/signatures/components/SignaturePreviewPane';
-import { SignatureToolbar } from '@/features/signatures/components/SignatureToolbar';
 import { PlusCircle, Users } from 'lucide-react';
 import CSVUploader from '@/features/teams/components/CSVUploader';
 import TeamsList from '@/features/teams/components/TeamsList';
@@ -91,13 +90,11 @@ const Dashboard = () => {
                     />
                   </div>
                 ) : selectedSignature ? (
-                  <>
-                    <SignatureToolbar
-                      signature={selectedSignature}
-                      onDelete={(id, name) => setDeleteTarget({ id, name })}
-                    />
-                    <SignaturePreviewPane signature={selectedSignature} />
-                  </>
+                  <SignaturePreviewPane
+                    signature={selectedSignature}
+                    signatures={signatures}
+                    onDelete={(id, name) => setDeleteTarget({ id, name })}
+                  />
                 ) : null}
               </div>
             ) : (
