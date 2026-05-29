@@ -19,13 +19,9 @@ const AppLayout = ({ children, defaultTab = 'signatures' }: AppLayoutProps) => {
   };
 
   return (
-    <SidebarProvider
-      defaultOpen
-      className="flex min-h-svh w-full flex-row"
-      style={{ '--sidebar-width': '16rem' } as React.CSSProperties}
-    >
+    <SidebarProvider defaultOpen className="flex min-h-svh w-full flex-row">
       <AppSidebar />
-      <SidebarInset className="flex min-h-svh min-w-0 flex-1 flex-col overflow-hidden">
+      <SidebarInset className="flex h-svh min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         {children(activeTab, setActiveTab)}
       </SidebarInset>
     </SidebarProvider>

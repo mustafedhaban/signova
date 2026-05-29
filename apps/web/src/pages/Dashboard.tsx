@@ -7,13 +7,12 @@ import DeleteSignatureDialog from '@/components/DeleteSignatureDialog';
 import { EmptyState } from '@/components/layout/empty-state';
 import { useSignatures } from '@/features/signatures/hooks/useSignatures';
 import { SignaturePreviewPane } from '@/features/signatures/components/SignaturePreviewPane';
-import { PlusCircle, Users } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import CSVUploader from '@/features/teams/components/CSVUploader';
 import TeamsList from '@/features/teams/components/TeamsList';
 import OrganizationMembersCard from '@/features/organizations/components/OrganizationMembersCard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle } from 'lucide-react';
 
 const Dashboard = () => {
@@ -67,25 +66,35 @@ const Dashboard = () => {
         {(activeTab) => (
           <div className="flex h-full min-h-0 flex-col">
             <Navbar
-              title={activeTab === 'signatures' ? 'Signatures' : 'Team management'}
+              title={
+                activeTab === 'signatures'
+                  ? selectedSignature?.name || 'Signatures'
+                  : 'Teams'
+              }
               description={
                 activeTab === 'signatures'
-                  ? 'Manage and export your email signatures'
-                  : 'Bulk import and organize team signatures'
+                  ? selectedSignature
+                    ? selectedSignature.email
+                    : 'Create your first signature'
+                  : 'Import and manage team signatures'
               }
             />
 
             {activeTab === 'signatures' ? (
               <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                 {signatures.length === 0 ? (
-                  <div className="flex flex-1 items-center justify-center p-8">
+                  <div className="flex flex-1 items-center justify-center">
                     <EmptyState
                       icon={PlusCircle}
-                      title="No signatures yet"
-                      description="Create your first professional email signature."
+                      title="Your first signature"
+                      description="Pick a template, add your details, and copy HTML into Gmail or Outlook."
                       action={{
                         label: 'Create signature',
                         onClick: () => navigate('/builder/new'),
+                      }}
+                      secondaryAction={{
+                        label: 'Browse installation guides',
+                        onClick: () => navigate('/guides'),
                       }}
                     />
                   </div>
@@ -100,29 +109,19 @@ const Dashboard = () => {
             ) : (
               <div className="flex-1 overflow-y-auto bg-muted/30 p-4 sm:p-8">
                 <div className="mx-auto max-w-4xl space-y-6">
-                  <Tabs value={activeTab} onValueChange={(v) => setSearchParams({ tab: v })}>
-                    <TabsList>
-                      <TabsTrigger value="teams" className="gap-2">
-                        <Users className="size-3.5" />
-                        Teams
-                      </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="teams" className="mt-6 space-y-6 outline-none">
-                      <CSVUploader />
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-base">Signature teams</CardTitle>
-                          <CardDescription>
-                            Group bulk-imported signatures by campaign or department
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <TeamsList />
-                        </CardContent>
-                      </Card>
-                      <OrganizationMembersCard />
-                    </TabsContent>
-                  </Tabs>
+                  <CSVUploader />
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">Signature teams</CardTitle>
+                      <CardDescription>
+                        Group bulk-imported signatures by campaign or department
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <TeamsList />
+                    </CardContent>
+                  </Card>
+                  <OrganizationMembersCard />
                 </div>
               </div>
             )}

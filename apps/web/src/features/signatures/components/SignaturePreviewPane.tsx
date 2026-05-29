@@ -1,19 +1,33 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from '@/lib/toast';
 import { ISignature } from '@signova/types';
-import { CheckCircle2, Copy, Download, Edit, Plus, Share2, Trash2 } from 'lucide-react';
+import {
+  CheckCircle2,
+  Copy,
+  Download,
+  Edit,
+  Mail,
+  MoreHorizontal,
+  Share2,
+  Trash2,
+} from 'lucide-react';
+import InstallationGuidesDialog from '@/features/guides/components/InstallationGuidesDialog';
 import { getTemplateById } from '../templates';
 import { exportSignatureToHtml, downloadSignatureAsHtml } from '../utils/export';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { API_BASE } from '@/lib/api';
 
 type SignaturePreviewPaneProps = {
   signature: ISignature;
@@ -21,16 +35,19 @@ type SignaturePreviewPaneProps = {
   onDelete: (id: string, name?: string) => void;
 };
 
+const actionBtn =
+  'cursor-pointer transition-[background-color,border-color,color,transform] duration-200 ease-[var(--ease-out)] active:scale-[0.98]';
+
 export function SignaturePreviewPane({
   signature,
-  signatures,
   onDelete,
 }: SignaturePreviewPaneProps) {
   const navigate = useNavigate();
-  const [, setSearchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [guidesOpen, setGuidesOpen] = useState(false);
   const Template = getTemplateById(signature.templateId || 'standard');
+  const templateLabel = (signature.templateId || 'standard').replace(/-/g, ' ');
 
   const handleCopy = () => {
     navigator.clipboard.writeText(exportSignatureToHtml(signature));
@@ -40,102 +57,152 @@ export function SignaturePreviewPane({
 
   const handleShare = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/signatures/${signature.id}/share`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      const data = await res.json();
+      const { data } = await axios.get<{ url: string }>(`${API_BASE}/signatures/${signature.id}/share`);
       await navigator.clipboard.writeText(data.url);
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 3000);
     } catch {
-      // ignore
+      toast.error('Could not copy share link. Please try again.');
     }
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-muted/30 p-4 sm:p-6">
-      <Card className="mx-auto w-full max-w-3xl">
-        <CardHeader className="gap-4 space-y-0">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0 space-y-1">
-              <CardTitle className="text-base">Preview</CardTitle>
-              <CardDescription>How this signature appears in email clients</CardDescription>
-              {signatures.length > 1 ? (
-                <Select
-                  value={signature.id}
-                  onValueChange={(id) => {
-                    if (id) setSearchParams({ tab: 'signatures', signature: id });
-                  }}
-                >
-                  <SelectTrigger className="mt-2 h-9 w-full max-w-xs">
-                    <SelectValue placeholder="Select signature" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {signatures.map((sig) => (
-                      <SelectItem key={sig.id} value={sig.id}>
-                        {sig.name || 'Untitled'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : null}
-            </div>
-            <div className="flex flex-wrap gap-2 shrink-0">
-              <Button variant="outline" size="sm" onClick={() => navigate('/builder/new')}>
-                <Plus className="size-4" />
-                New
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate(`/builder/${signature.id}`)}>
-                <Edit className="size-4" />
-                Edit
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleShare}>
-                <Share2 className="size-4" />
-                {shareCopied ? 'Copied' : 'Share'}
-              </Button>
-              <Button
-                variant={copied ? 'default' : 'outline'}
-                size="sm"
-                onClick={handleCopy}
-                className={cn(copied && 'bg-success text-success-foreground hover:bg-success/90')}
+    <>
+      <InstallationGuidesDialog
+        open={guidesOpen}
+        onOpenChange={setGuidesOpen}
+        onDownloadHtml={() =>
+          downloadSignatureAsHtml(signature, `${signature.name || 'signature'}.html`)
+        }
+      />
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div className="border-b border-border/80 bg-background px-4 py-3 sm:px-8">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3">
+          <Badge variant="secondary" className="font-normal capitalize">
+            {templateLabel}
+          </Badge>
+          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+            <Button
+              size="sm"
+              className={actionBtn}
+              onClick={() => navigate(`/builder/${signature.id}`)}
+            >
+              <Edit className="size-4" />
+              <span className="sr-only sm:not-sr-only sm:ml-0">Edit</span>
+            </Button>
+            <Button
+              variant={copied ? 'default' : 'outline'}
+              size="sm"
+              onClick={handleCopy}
+              className={cn(
+                actionBtn,
+                'hidden sm:inline-flex',
+                copied && 'bg-success text-success-foreground hover:bg-success/90',
+              )}
+            >
+              {copied ? <CheckCircle2 className="size-4" /> : <Copy className="size-4" />}
+              {copied ? 'Copied' : 'Copy HTML'}
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={<Button variant="outline" size="sm" className={actionBtn} />}
               >
-                {copied ? <CheckCircle2 className="size-4" /> : <Copy className="size-4" />}
-                {copied ? 'Copied' : 'Copy HTML'}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  downloadSignatureAsHtml(signature, `${signature.name || 'signature'}.html`)
-                }
-              >
-                <Download className="size-4" />
-                Download
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => onDelete(signature.id, signature.name)}
-              >
-                <Trash2 className="size-4" />
-                Delete
-              </Button>
-            </div>
+                <MoreHorizontal className="size-4" />
+                <span className="sr-only">More</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-44">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={handleCopy} className="cursor-pointer sm:hidden">
+                    {copied ? <CheckCircle2 className="size-4" /> : <Copy className="size-4" />}
+                    {copied ? 'Copied' : 'Copy HTML'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleShare} className="cursor-pointer">
+                    <Share2 className="size-4" />
+                    {shareCopied ? 'Link copied' : 'Share link'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      downloadSignatureAsHtml(signature, `${signature.name || 'signature'}.html`)
+                    }
+                  >
+                    <Download className="size-4" />
+                    Download
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    className="cursor-pointer"
+                    onClick={() => onDelete(signature.id, signature.name)}
+                  >
+                    <Trash2 className="size-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-lg border bg-background p-6 sm:p-8">
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center px-4 py-8 sm:px-8 sm:py-10">
+        <div className="w-full max-w-4xl overflow-hidden rounded-xl border border-border bg-card shadow-soft">
+          <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
+            <span className="size-2 rounded-full bg-red-400/90" aria-hidden />
+            <span className="size-2 rounded-full bg-amber-400/90" aria-hidden />
+            <span className="size-2 rounded-full bg-emerald-400/90" aria-hidden />
+            <span className="ml-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              Inbox preview
+            </span>
+          </div>
+          <div className="bg-white p-8 sm:p-12">
             <div className="pointer-events-none select-none">
               {Template ? (
                 <Template.component data={signature} />
               ) : (
-                <span className="text-sm italic text-muted-foreground">Template not found</span>
+                <p className="text-sm text-muted-foreground">Template not found.</p>
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Paste copied HTML into your email client signature settings.
+        </p>
+
+        <div className="mt-8 w-full max-w-4xl rounded-xl border border-border bg-card p-5 shadow-soft sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-[oklch(0.488_0.127_237.322)]">
+                <Mail className="size-5" strokeWidth={1.75} aria-hidden />
+              </span>
+              <div>
+                <h3 className="font-heading text-sm font-semibold tracking-tight">
+                  Install your signature
+                </h3>
+                <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                  Step-by-step guides for Gmail, Outlook, and Apple Mail.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
+              <Button size="sm" className={actionBtn} onClick={() => setGuidesOpen(true)}>
+                View guides
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className={actionBtn}
+                onClick={() => navigate('/guides')}
+              >
+                Open full page
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    </>
   );
 }

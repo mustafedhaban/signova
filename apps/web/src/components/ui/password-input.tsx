@@ -16,7 +16,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <div className={cn('relative', leftIcon && 'group')}>
         {leftIcon ? (
-          <div className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary [&_svg]:h-4 [&_svg]:w-4">
+          <div className="pointer-events-none absolute left-2.5 top-1/2 z-10 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary [&_svg]:size-4">
             {leftIcon}
           </div>
         ) : null}
@@ -24,7 +24,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
           ref={ref}
           id={inputId}
           type={visible ? 'text' : 'password'}
-          className={cn(leftIcon ? 'pl-11' : undefined, 'pr-11', className)}
+          className={cn(leftIcon ? 'pl-10' : undefined, 'pr-11', className)}
           {...props}
         />
         <button

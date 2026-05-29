@@ -62,9 +62,10 @@ export class TeamsService {
       teamId: teamId,
     }));
 
-    return this.prisma.signature.createMany({
+    const result = await this.prisma.signature.createMany({
       data: signaturesData,
     });
+    return { count: result.count };
   }
 
   async remove(userId: string, id: string) {

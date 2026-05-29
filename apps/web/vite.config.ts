@@ -1,14 +1,20 @@
-import path from "path"
-import tailwindcss from "tailwindcss"
-import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import path from 'path';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss() as any],
+  // Vite 8 defaults to Lightning CSS; Tailwind v4 expects the PostCSS pipeline.
+  css: {
+    transformer: 'postcss',
+  },
+  build: {
+    cssMinify: 'esbuild',
+  },
+  plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
-})
+});

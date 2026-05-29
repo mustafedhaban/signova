@@ -7,10 +7,8 @@ import { loginDev, loginWithPassword } from '@/features/auth/lib/auth-api';
 import { loginSchema, type LoginFormValues } from '@/features/auth/lib/schemas';
 import { AuthFormCard } from '@/features/auth/components/auth-form-card';
 import { AuthIconField } from '@/features/auth/components/auth-icon-field';
-import { AuthPageHeader } from '@/features/auth/components/auth-page-header';
 import AuthLayout from '@/components/AuthLayout';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -57,89 +55,82 @@ const LoginPage = () => {
 
   return (
     <AuthLayout>
-      <div className="space-y-6">
-        <AuthPageHeader tagline="Sign in to manage your team signatures" />
+      <AuthFormCard
+        title="Sign in"
+        description="Access your signatures and team settings."
+        footer={
+          <>
+            No account?{' '}
+            <Link to="/register" className="font-medium text-foreground underline-offset-4 hover:underline">
+              Register
+            </Link>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          <FieldGroup>
+            <AuthIconField id="email" label="Work email" icon={<Mail />} error={errors.email}>
+              <Input
+                type="email"
+                autoComplete="email"
+                placeholder="you@company.com"
+                className="h-10"
+                {...register('email')}
+              />
+            </AuthIconField>
 
-        <AuthFormCard
-          title="Welcome back"
-          description="Use your password, or leave it blank for local dev sign-in"
-          footer={
-            <>
-              New to Signova?{' '}
-              <Link to="/register" className="font-medium text-foreground underline-offset-4 hover:underline">
-                Create a free account
-              </Link>
-            </>
-          }
-        >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-            <FieldGroup>
-              <AuthIconField
-                id="email"
-                label="Email"
-                icon={<Mail />}
-                error={errors.email}
-              >
-                <Input
-                  type="email"
-                  autoComplete="email"
-                  placeholder="name@company.com"
-                  {...register('email')}
-                />
-              </AuthIconField>
-
-              <Field data-invalid={!!errors.password}>
+            <Field data-invalid={!!errors.password}>
+              <div className="flex items-center justify-between gap-2">
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <PasswordInput
-                  id="password"
-                  leftIcon={<Lock />}
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  className="h-10"
-                  aria-invalid={!!errors.password}
-                  {...register('password')}
-                />
-                <FieldDescription>Optional — leave empty for dev sign-in without a password</FieldDescription>
-                <FieldError errors={errors.password ? [errors.password] : undefined} />
-              </Field>
-            </FieldGroup>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                >
+                  Forgot?
+                </Link>
+              </div>
+              <PasswordInput
+                id="password"
+                leftIcon={<Lock />}
+                autoComplete="current-password"
+                placeholder="••••••••"
+                className="h-10"
+                aria-invalid={!!errors.password}
+                {...register('password')}
+              />
+              <FieldDescription>Leave blank in local dev to sign in with email only.</FieldDescription>
+              <FieldError errors={errors.password ? [errors.password] : undefined} />
+            </Field>
+          </FieldGroup>
 
-            {serverError ? (
-              <Alert variant="destructive">
-                <AlertCircle className="size-4" />
-                <AlertTitle>Could not sign in</AlertTitle>
-                <AlertDescription>{serverError}</AlertDescription>
-              </Alert>
-            ) : null}
+          {serverError ? (
+            <Alert variant="destructive">
+              <AlertCircle className="size-4" />
+              <AlertTitle>Could not sign in</AlertTitle>
+              <AlertDescription>{serverError}</AlertDescription>
+            </Alert>
+          ) : null}
 
-            <div className="flex items-center justify-between gap-2">
-              <Badge variant="outline" className="font-normal text-muted-foreground">
-                Dev: email only
-              </Badge>
-              <Link
-                to="/forgot-password"
-                className="text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            <Button type="submit" disabled={isSubmitting} className="h-10 w-full" size="lg">
-              {isSubmitting ? (
-                <>
-                  <Spinner className="mr-2" />
-                  Signing in…
-                </>
-              ) : (
-                <>
-                  Sign in
-                  <ArrowRight className="ml-1.5 size-4" />
-                </>
-              )}
-            </Button>
-          </form>
-        </AuthFormCard>
-      </div>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="h-11 w-full cursor-pointer transition-[background-color,transform] duration-200 ease-[var(--ease-out)] active:scale-[0.99]"
+            size="lg"
+          >
+            {isSubmitting ? (
+              <>
+                <Spinner className="mr-2" />
+                Signing in…
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="ml-1.5 size-4" />
+              </>
+            )}
+          </Button>
+        </form>
+      </AuthFormCard>
     </AuthLayout>
   );
 };

@@ -95,9 +95,9 @@ const OrganizationSettings: React.FC = () => {
   };
 
   return (
-    <AppLayout defaultTab="settings">
+    <AppLayout>
       {() => (
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
           <Navbar
             title="Organizations"
             description="Workspaces, branding, and team members"

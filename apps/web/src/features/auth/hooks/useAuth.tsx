@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE } from '@/lib/api';
 
-const API = 'http://localhost:3000/api/v1';
+const API = API_BASE;
 
 interface AuthContextType {
   user: any | null;

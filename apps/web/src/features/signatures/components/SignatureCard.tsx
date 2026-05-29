@@ -16,6 +16,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTemplateById } from '../templates';
 import { cn } from '@/lib/utils';
+import axios from 'axios';
+import { API_BASE } from '@/lib/api';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,10 +46,9 @@ const SignatureCard = ({ signature, onDelete, onEdit }: SignatureCardProps) => {
 
   const handleShare = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/signatures/${signature.id}/share`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      const data = await res.json();
+      const { data } = await axios.get<{ url: string }>(
+        `${API_BASE}/signatures/${signature.id}/share`,
+      );
       await navigator.clipboard.writeText(data.url);
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 3000);

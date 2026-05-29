@@ -18,6 +18,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building2, Loader2, UserPlus } from 'lucide-react';
+import { API_BASE } from '@/lib/api';
 
 const roleBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
   owner: 'default',
@@ -25,7 +26,7 @@ const roleBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
   member: 'outline',
 };
 
-const ORG_API = 'http://localhost:3000/api/v1/organizations';
+const ORG_API = `${API_BASE}/organizations`;
 
 const OrganizationMembersCard: React.FC = () => {
   const { user } = useAuth();

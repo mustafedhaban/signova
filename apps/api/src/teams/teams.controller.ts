@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete, UseGuards, Req } from '@nes
 import { AuthGuard } from '@nestjs/passport';
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
+import { ImportTeamCsvDto } from './dto/import-team-csv.dto';
 
 @Controller('teams')
 @UseGuards(AuthGuard('jwt'))
@@ -24,7 +25,7 @@ export class TeamsController {
   }
 
   @Post(':id/import')
-  importCsv(@Req() req, @Param('id') id: string, @Body() body: { members: any[] }) {
+  importCsv(@Req() req, @Param('id') id: string, @Body() body: ImportTeamCsvDto) {
     return this.teamsService.importCsv(req.user.userId, id, body.members);
   }
 

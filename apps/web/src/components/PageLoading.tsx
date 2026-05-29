@@ -1,3 +1,4 @@
+import { Mail } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 
 interface PageLoadingProps {
@@ -6,10 +7,13 @@ interface PageLoadingProps {
 
 const PageLoading = ({ label = 'Loading…' }: PageLoadingProps) => {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-3">
-        <Spinner className="size-8" />
-        <p className="text-sm text-muted-foreground">{label}</p>
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 bg-background">
+      <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
+        <Mail className="size-5" strokeWidth={2} aria-hidden />
+      </span>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Spinner className="size-4" />
+        {label}
       </div>
     </div>
   );

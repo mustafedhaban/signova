@@ -1,33 +1,63 @@
 import type { LucideIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
+type EmptyStateAction = {
+  label: string;
+  onClick: () => void;
+};
 
 type EmptyStateProps = {
   icon: LucideIcon;
   title: string;
   description: string;
-  action?: { label: string; onClick: () => void };
+  action?: EmptyStateAction;
+  secondaryAction?: EmptyStateAction;
   className?: string;
 };
 
-export function EmptyState({ icon: Icon, title, description, action, className }: EmptyStateProps) {
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+  secondaryAction,
+  className,
+}: EmptyStateProps) {
   return (
-    <Card className={cn('border-dashed', className)}>
-      <CardHeader className="items-center text-center">
-        <span className="mb-2 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-          <Icon className="size-6" aria-hidden />
-        </span>
-        <CardTitle className="text-base">{title}</CardTitle>
-        <CardDescription className="max-w-sm">{description}</CardDescription>
-      </CardHeader>
-      {action ? (
-        <CardContent className="flex justify-center pb-8">
-          <Button onClick={action.onClick} size="lg" className="h-10">
-            {action.label}
-          </Button>
-        </CardContent>
+    <div
+      className={cn(
+        'mx-auto flex max-w-md flex-col items-center px-6 py-16 text-center',
+        className,
+      )}
+    >
+      <span className="mb-6 flex size-14 items-center justify-center rounded-2xl bg-primary/8 text-[oklch(0.488_0.127_237.322)] ring-1 ring-border">
+        <Icon className="size-7" strokeWidth={1.5} aria-hidden />
+      </span>
+      <h2 className="font-heading text-xl font-semibold tracking-tight">{title}</h2>
+      <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>
+      {action || secondaryAction ? (
+        <div className="mt-8 flex flex-col items-center gap-3">
+          {action ? (
+            <Button
+              onClick={action.onClick}
+              size="lg"
+              className="h-11 cursor-pointer px-8 transition-[background-color,transform] duration-200 ease-[var(--ease-out)] active:scale-[0.99]"
+            >
+              {action.label}
+            </Button>
+          ) : null}
+          {secondaryAction ? (
+            <Button
+              variant="ghost"
+              onClick={secondaryAction.onClick}
+              className="cursor-pointer text-muted-foreground hover:text-foreground"
+            >
+              {secondaryAction.label}
+            </Button>
+          ) : null}
+        </div>
       ) : null}
-    </Card>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000/api/v1';
+import { API_BASE } from '@/lib/api';
 
 type AuthTokens = { access_token: string; refresh_token: string };
 

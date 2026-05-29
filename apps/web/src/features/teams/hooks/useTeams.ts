@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { ITeam } from '@signova/types';
+import { API_BASE } from '@/lib/api';
 
-const API_URL = 'http://localhost:3000/api/v1/teams';
+const API_URL = `${API_BASE}/teams`;
 
 export interface TeamWithCount extends ITeam {
   _count?: { signatures: number };

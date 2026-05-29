@@ -27,7 +27,7 @@ export function AuthIconField({ id, label, description, icon, error, children }:
         {React.cloneElement(children, {
           id,
           'aria-invalid': invalid,
-          className: cn('h-10 pl-9', children.props.className),
+          className: cn('h-10 pl-10', children.props.className),
         })}
       </div>
       {description ? <FieldDescription>{description}</FieldDescription> : null}

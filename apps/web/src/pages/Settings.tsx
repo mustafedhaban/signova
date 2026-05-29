@@ -14,8 +14,9 @@ import ChangePasswordForm from '@/features/auth/components/ChangePasswordForm';
 import axios from 'axios';
 import { AlertCircle, CheckCircle2, Download, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { toast, toastApiError } from '@/lib/toast';
+import { API_BASE } from '@/lib/api';
 
-const API = 'http://localhost:3000/api/v1/users/me';
+const API = `${API_BASE}/users/me`;
 
 const Settings = () => {
   const { user, logout, refreshUser } = useAuth();
@@ -49,17 +50,18 @@ const Settings = () => {
   };
 
   const handleExport = async () => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`${API}/export`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'my-signova-data.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const { data } = await axios.get(`${API}/export`, { responseType: 'blob' });
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my-signova-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Data export downloaded');
+    } catch (e: unknown) {
+      toastApiError(e, 'Failed to export data');
+    }
   };
 
   const handleDelete = async () => {

@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { ISignature } from '@signova/types';
 import { toSignatureApiPayload } from '../utils/api-payload';
+import { API_BASE } from '@/lib/api';
 
-const API_URL = 'http://localhost:3000/api/v1/signatures';
+const API_URL = `${API_BASE}/signatures`;
 
 export const useSignatures = () => {
   const queryClient = useQueryClient();

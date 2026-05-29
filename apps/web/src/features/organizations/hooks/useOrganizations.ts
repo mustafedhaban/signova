@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
-const API = 'http://localhost:3000/api/v1/organizations';
+import { API_BASE } from '@/lib/api';
+
+const API = `${API_BASE}/organizations`;
 
 export interface OrgMember {
   id: string;

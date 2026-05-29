@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Copy, Download, Edit, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { API_BASE } from '@/lib/api';
 
 const SharedSignature: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -22,7 +23,7 @@ const SharedSignature: React.FC = () => {
       setData(JSON.parse(json));
     } catch {
       // Fallback: try fetching from API (for server-side decode)
-      fetch(`http://localhost:3000/api/v1/share/${token}`)
+      fetch(`${API_BASE}/share/${token}`)
         .then((r) => r.json())
         .then(setData)
         .catch(() => setError('Invalid or expired share link'));

@@ -12,7 +12,9 @@ import { Spinner } from '@/components/ui/spinner';
 import { AlertCircle, CheckCircle2, KeyRound, Lock } from 'lucide-react';
 import { toast, toastApiError } from '@/lib/toast';
 
-const API = 'http://localhost:3000/api/v1/auth/change-password';
+import { API_BASE } from '@/lib/api';
+
+const API = `${API_BASE}/auth/change-password`;
 
 const schema = (hasPassword: boolean) =>
   z
